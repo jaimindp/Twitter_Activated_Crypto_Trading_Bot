@@ -1,5 +1,5 @@
 # tweet_activated_crypto_trader
-The idea is to buy crypto using a trigger (e.g.) when Elon musk tweets about Dogecoin and sell after a user specified time or price or % increase
+The idea is to buy crypto using a trigger e.g. when Elon musk tweets about Dogecoin and sell after a user specified time or price or % increase
 
 Markets particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency
 
