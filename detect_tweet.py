@@ -1,5 +1,7 @@
 import tweepy
 import json
+import time
+
 
 # Read keys
 f = open('../keys.json','r')
@@ -12,30 +14,32 @@ twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consume
 elon = ['elonmusk',44196397]
 me = ['ArbitrageDaddy', 1351770767130673152]
 
+user = me
+
+lookfor = ['doge','crypto','dogecoin','coin']
 
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
 auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_token_secret'])
 api = tweepy.API(auth)
 
-tweets = api.user_timeline(screen_name=elon[0], 
+tweets = api.user_timeline(screen_name=user[0], 
                            # 200 is the maximum allowed count
-                           count=200,
+                           count=2,
                            include_rts = True,
-                           # Necessary to keep full_text 
+                           # Necessary to keep full_text
                            # otherwise only the first 140 words are extracted
                            tweet_mode = 'extended'
                            )
 
-
-print(tweets)
-
-
-tweets2 = tw.Cursor(api.search,
-              q=search_words,
-              lang="en",
-              since=date_since).items(5)
-
-
 for tweet in tweets:
-	print(tweet.text)
+	last_tweet = tweet
+	break
 
+new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], tweet_mode="extended", count=1).items(1))[0]
+
+while new_tweet.full_text == last_tweet.full_text:
+	new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], tweet_mode="extended", count=1).items(1))[0]
+	time.sleep(0.1)
+
+if any(i in new_tweet.full_text.lower() for i in lookfor):
+	print('ola we going baby to the mooooooooon')
