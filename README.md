@@ -12,7 +12,7 @@ To Do
 - Backtest
 - User input parameters
 - Implement sentiment feature
-- Run computer vision to detect objects if there is a photo
+- Object detection in images
 
 Notes
 - Requires a Twitter Developer API detecting tweets through Tweepy
