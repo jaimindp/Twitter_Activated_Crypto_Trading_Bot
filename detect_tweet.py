@@ -43,3 +43,35 @@ while new_tweet.full_text == last_tweet.full_text:
 
 if any(i in new_tweet.full_text.lower() for i in lookfor):
 	print('ola we going baby to the mooooooooon')
+
+
+
+## Another method
+
+# import tweepy
+# import time
+# import sys
+# import inspect
+
+# consumer_key = 'xxxxxxxxxxxxxxxxxxx'
+# consumer_secret = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+# access_token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+# access_token_secret = 'xxxxxxxxxxxxxxxx'
+
+# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+# auth.set_access_token(access_token, access_token_secret)
+# auth.secure = True
+
+# api = tweepy.API(auth)
+
+# class MyStreamListener(tweepy.StreamListener):
+#     def on_status(self, status):
+#             if  status.user.screen_name.encode('UTF-8').lower() == 'someuser':
+#                 print 'TWEET:', status.text.encode('UTF-8')
+#                 print 'FOLLOWERS:', status.user.followers_count
+#                 print time.ctime()
+#                 print '\n'
+
+# myStreamListener = MyStreamListener()
+# myStream = tweepy.Stream(auth = api.auth, listener=MyStreamListener())
+# myStream.filter(follow=['someuserid'])
