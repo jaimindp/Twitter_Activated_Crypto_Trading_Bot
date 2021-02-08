@@ -1,6 +1,6 @@
 # tweet_activated_crypto_trader
 
-(Feb 8th - work in progress, uses Kraken exchange for buying Dogecoin in the US)
+(Feb 8th 2021 - work in progress, uses Kraken exchange for buying Dogecoin in the US)
 
 The idea is to buy crypto using a trigger e.g. when Elon musk tweets about Dogecoin and sell after a user specified time / price / % gain
 
