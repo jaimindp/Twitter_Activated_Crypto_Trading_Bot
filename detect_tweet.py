@@ -1,6 +1,7 @@
 import tweepy
 import json
 import time
+from kraken_api import *
 
 
 # Read keys
@@ -14,7 +15,7 @@ twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consume
 elon = ['elonmusk',44196397]
 me = ['ArbitrageDaddy', 1351770767130673152]
 
-user = me
+user = elon
 
 lookfor = ['doge','crypto','dogecoin','coin']
 
@@ -22,27 +23,29 @@ auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_
 auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_token_secret'])
 api = tweepy.API(auth)
 
-tweets = api.user_timeline(screen_name=user[0], 
-                           # 200 is the maximum allowed count
-                           count=2,
-                           include_rts = True,
-                           # Necessary to keep full_text
-                           # otherwise only the first 140 words are extracted
-                           tweet_mode = 'extended'
-                           )
+while 1:
+	tweets = api.user_timeline(screen_name=user[0], 
+	                           # 200 is the maximum allowed count
+	                           count=2,
+	                           include_rts = True,
+	                           # Necessary to keep full_text
+	                           # otherwise only the first 140 words are extracted
+	                           tweet_mode = 'extended'
+	                           )
 
-for tweet in tweets:
-	last_tweet = tweet
-	break
+	for tweet in tweets:
+		last_tweet = tweet
+		break
 
-new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], tweet_mode="extended", count=1).items(1))[0]
-
-while new_tweet.full_text == last_tweet.full_text:
 	new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], tweet_mode="extended", count=1).items(1))[0]
-	time.sleep(0.1)
 
-if any(i in new_tweet.full_text.lower() for i in lookfor):
-	print('ola we going baby to the mooooooooon')
+	while new_tweet.full_text == last_tweet.full_text:
+		new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], tweet_mode="extended", count=1).items(1))[0]
+		time.sleep(0.1)
+
+	if any(i in new_tweet.full_text.lower() for i in lookfor):
+		execute_trade(api_keys, paper=False)
+		print('ola we going baby to the mooooooooon')
 
 
 
