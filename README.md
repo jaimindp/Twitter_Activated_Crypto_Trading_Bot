@@ -9,14 +9,17 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 Currently looks for substring keyword matches in order to execute the trade
 
 To Do
-- Backtest
-- User input parameters
+- Backtest (done)
+- User input parameters (done)
+- Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%)
 - Implement sentiment feature
 - Object detection in images
 
 Notes
 - Requires a Twitter Developer API detecting tweets through Tweepy
-- Uses ccxt (cryptocurrency exchange trading library which has support for a huge number of exchanges and APIs)
+- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt
+	- Uses ccxt (cryptocurrency exchange trading library which has support for a huge number of exchanges and APIs)
+
 
 
 
