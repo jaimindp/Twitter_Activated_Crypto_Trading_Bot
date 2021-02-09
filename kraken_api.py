@@ -12,19 +12,20 @@ def execute_trade(keys, pair, hold_time=60, buy_volume=50, simulate=False):
 	ticker = pair[0]+'/'+pair[1]
 	tousd = pair[0]+'/USD'
 
-	if simulate:
-		usdpair = k.fetchTicker(tousd)
-		print('Buying {} {} at {:.8f} which is ${:.8f} '.format(buy_volume,pair,k.fetchTicker(ticker)['bid'],(usdpair['bid']+usdpair['ask'])/2))
-	else:
+	if not simulate:
 		trade = k.create_order(ticker,'market','buy',buy_volume)
-		print(trade)
+		
+		print('\n',trade)
+	
+	usdpair = k.fetchTicker(tousd)
+	print('\nBuying {} {} at {:.8f} which is ${:.8f}'.format(buy_volume,pair,k.fetchTicker(ticker)['bid'],(usdpair['bid']+usdpair['ask'])/2))
 
 	time.sleep(hold_time)
 
-	if simulate:
-		usdpair = k.fetchTicker(tousd)
-		print('\nSelling {} {} at {:.8f} which is ${:.8f} '.format(buy_volume,pair,k.fetchTicker(ticker)['ask'],(usdpair['bid']+usdpair['ask'])/2))
-	else:
+	if not simulate:
 		trade = k.create_order(ticker,'market','sell',buy_volume)
-		print(trade)
+		print('\n',trade)
+		
+	usdpair = k.fetchTicker(tousd)
+	print('\nSelling {} {} at {:.8f} which is ${:.8f}\n'.format(buy_volume,pair,k.fetchTicker(ticker)['ask'],(usdpair['bid']+usdpair['ask'])/2))
 

@@ -38,7 +38,7 @@ twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consume
 
 # User and crypto selection
 users ={'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]} 
-cryptos = {'dogecoin':{'triggers':['doge','hodl','doggo'],'symbol':'DOGE'}, 'bitcoin':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},'usd':{'symbol':'USD'}}
+cryptos = {'dogecoin':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, 'bitcoin':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},'usd':{'symbol':'USD'}}
 
 # Get user inputs
 print('\nEnter crypto to buy: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
@@ -101,10 +101,12 @@ else:
 
 print('\nWaiting to match a tweet\n')
 
+# Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
 auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_token_secret'])
 api = tweepy.API(auth)
 
+# Execute function
 tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate)
 
 ## Another method using streaming (mitigates the wait on rate limit issue)
