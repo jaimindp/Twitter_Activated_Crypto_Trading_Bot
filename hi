@@ -1,0 +1,4 @@
+try:
+	print(sdaf)
+except:
+	print('no')

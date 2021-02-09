@@ -5,30 +5,34 @@ from kraken_api import *
 
 # Checks if a tweet from a user contains a particular trigger word
 def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True):
-	print(pair)
+
 	while 1:
 		
 		# Bypass the need to check twitter for testing if tweet = False
 		if wait_tweet:
-			tweets = api.user_timeline(user_id=user[1], 
-			                           count=1,
-			                           include_rts = True,
-			                           exclude_replies = True,
-			                           tweet_mode = 'extended',
-			                           wait_on_rate_limit=True,
-			                           wait_on_rate_limit_notify=True
-			                           )
-
-			
-			last_tweet = tweets[0]
-
-			new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1).items(1))[0]
+			try:
+				tweets = api.user_timeline(user_id=user[1], 
+				                           count=1,
+				                           include_rts = True,
+				                           exclude_replies = True,
+				                           tweet_mode = 'extended',
+				                           wait_on_rate_limit=True,
+				                           wait_on_rate_limit_notify=True
+				                           )
+			except Exception as e:
+				print('couldnt get first tweet')
+				continue
+			last_tweet = new_tweet = tweets[0]
+			print('\nWaiting for {} to tweet\n'.format(user[0]))
 
 			while new_tweet.full_text == last_tweet.full_text:
-			new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1).items(1))[0]
-				
-				time.sleep(1)
-			print('Moonshot inbound!\n')
+				try:
+					new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1,wait_on_rate_limit=True,wait_on_rate_limit_notify=True).items(1))[0]	
+				except Exception as e:
+					print(e,'\nFailed at tweet collector')
+				time.sleep(0.5)
+
+			print('\nMoonshot inbound!\n')
 
 		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
 			execute_trade(api_keys, pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
@@ -46,14 +50,14 @@ twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consume
 
 # User and crypto selection
 users ={'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]} 
-cryptos = {'dogecoin':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, 'bitcoin':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},'usd':{'symbol':'USD'}}
+cryptos = {'doge':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, 'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},'usd':{'symbol':'USD'}}
 
 # Get user inputs
 print('\nEnter crypto to buy: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
 skip_input = False
 crypto  = input()
 if not crypto:
-	crypto = 'dogecoin'
+	crypto = 'doge'
 	skip_input = True
 buy_coin = cryptos[crypto]
 
@@ -61,7 +65,7 @@ if not skip_input:
 	print('\nEnter currency to sell: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
 	sell_coin  = cryptos[input()]
 else:
-	sell_coin = cryptos['bitcoin']
+	sell_coin = cryptos['btc']
 
 pair = [buy_coin['symbol'],sell_coin['symbol']]
 
@@ -89,9 +93,9 @@ if not skip_input:
 	print('\nVolume in crypto: ')
 	volume = input()
 	if not volume:
-		if crypto == 'dogecoin':
+		if crypto == 'doge':
 			volume = 50
-		elif crypto == 'bitcoin':
+		elif crypto == 'btc':
 			volume = 0.0002
 	else:
 		volume = float(volume)
@@ -107,7 +111,6 @@ if not skip_input:
 else:
 	simulate = True
 
-print('\nWaiting for the tweet\n')
 
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
