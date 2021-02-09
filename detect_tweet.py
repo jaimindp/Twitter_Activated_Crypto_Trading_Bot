@@ -30,7 +30,7 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 					new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1,wait_on_rate_limit=True,wait_on_rate_limit_notify=True).items(1))[0]	
 				except Exception as e:
 					print(e,'\nFailed at tweet collector')
-				time.sleep(0.5)
+				time.sleep(1)
 
 			print('\nMoonshot inbound!\n')
 
