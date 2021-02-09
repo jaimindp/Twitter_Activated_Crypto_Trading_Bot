@@ -11,9 +11,11 @@ Currently looks for substring keyword matches in order to execute the trade
 To Do
 - Backtest (done)
 - User input parameters (done)
+- Error handling if trade is unclosed
 - Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%)
 - Implement sentiment feature
 - Object detection in images
+
 
 Notes
 - Requires a Twitter Developer API detecting tweets through Tweepy
