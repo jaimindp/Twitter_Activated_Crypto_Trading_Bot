@@ -45,7 +45,6 @@ def execute_trade(keys, pair, hold_time=60, buy_volume=50, simulate=False):
 			except Exception as e:
 				print(e, '\n\ntrying to sell position again')
 				k = ccxt.kraken({'apiKey':kraken_keys['api_key'], 'secret':kraken_keys['secret_key']})
-				trade = k.create_order(ticker,'market','sell',buy_volume)
 		print('\n',trade)
 
 	usdpair1 = k.fetchTicker(tousd1)

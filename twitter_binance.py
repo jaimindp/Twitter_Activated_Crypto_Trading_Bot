@@ -1,10 +1,12 @@
 import tweepy
 import json
 import time
-from kraken_api import *
+from binance_api import *
 
 # Checks if a tweet from a user contains a particular trigger word
 def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True):
+
+	exchange = binance_api(api_keys)
 
 	while 1:
 		
@@ -35,7 +37,7 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 			print('\nMoonshot inbound!\n')
 
 		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
-			execute_trade(api_keys, pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
+			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
 			print('Closed out\n\n')
 
 		if not wait_tweet:
@@ -46,7 +48,6 @@ f = open('../keys.json','r')
 api_keys = json.loads(f.read())
 f.close()
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
-
 
 # User and crypto selection
 users ={'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]} 
@@ -111,6 +112,8 @@ if not skip_input:
 else:
 	simulate = True
 
+if simulate:
+	print('\nSIMULATION TRADING')
 
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
