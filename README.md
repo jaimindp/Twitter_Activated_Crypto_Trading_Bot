@@ -1,8 +1,8 @@
 # Tweet Activated Crypto Trader
 
-# Feb 9th 2021 - can use either Kraken (US) or Binance (Non-US) and has been tested on DOGE/BTC
+### Feb 9th 2021 - can use either Kraken (US) or Binance (Non-US) and has been tested on DOGE/BTC
 
-The idea is to buy crypto using a trigger e.g. when Elon musk tweets about Dogecoin and sell after a user specified time / price / % gain
+The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
 
 Markets, particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency, essentially crypto pump and dumps. We can capitalize on this opportunity by being one of the first to exectue trades when listening for the information on social media
 
