@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### Feb 9th 2021 - use either Kraken (US) or Binance (Non-US) tested on DOGE/BTC (Kraken & Binance), DOGT/GBP (Binance)
+### Feb 10th 2021 - uses either Kraken (US) or Binance (Non-US) tested on DOGE/BTC (Kraken & Binance), DOGT/GBP (Binance), made a 17% return from Elon's latest Doge tweet
 
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
 
@@ -14,6 +14,7 @@ Currently looks for substring keyword matches in order to execute the trade
 - Error handling if trade is unclosed (done)
 - Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%) (done)
 - Trade logging json mechanism
+- Reduce latency between tweet and trade from 3s to <1s
 - Get a list of accounts to follow
 - Test for multiple other cryptos/alt coins
 - Mechanism for pulling out of all positions
