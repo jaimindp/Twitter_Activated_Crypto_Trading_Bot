@@ -16,12 +16,13 @@ class binance_api:
 			try:
 				buy_trade = self.exchange.create_order(ticker,'market','buy',buy_volume)
 				break
-			except:
+			except Exception as e:
 				time.sleep(0.5)
 				if i == 9:
 					print('Exiting')
 					exit()
-				print('Unsucessful buy, trying again')
+				print(e)
+				print('\nUnsucessful buy, trying again')
 		print('\n',buy_trade)
 		return buy_trade
 

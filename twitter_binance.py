@@ -51,7 +51,9 @@ twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consume
 
 # User and crypto selection
 users ={'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]} 
-cryptos = {'doge':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, 'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},'usd':{'symbol':'USD'}}
+cryptos = {'doge':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, \
+		   'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},\
+		   'usd':{'symbol':'USD'},'usdt':{'symbol':'USDT'},'gbp':{'symbol':'GBP'}}
 
 # Get user inputs
 print('\nEnter crypto to buy: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
