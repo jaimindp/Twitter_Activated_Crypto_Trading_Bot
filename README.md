@@ -8,7 +8,9 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 
 When a Tweet is posted, it checks for substring matches with keywords for a particularcryptpcurrency, these keywords can be edited and more cryptos can be added in order to execute the trade
 
-To run with Binance: `python twitter_binance.py`, to run with Kraken: `python detect_tweet.py` API keys are kept in a json called one directory up from repo ../keys.json
+To configure on local system: `pip install -r requirements.txt`
+
+To run with Binance: `python twitter_binance.py`, to run with Kraken: `python kraken_binance.py` API keys are kept in a json called one directory up from repo ../keys.json
 
 ## To Do
 - Backtest (done)
