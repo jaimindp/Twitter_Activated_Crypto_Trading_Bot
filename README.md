@@ -10,14 +10,13 @@ When a Tweet is posted, it checks for substring matches with keywords for a part
 
 These keywords and coins can be user specified
 
-
-To configure on local system:\ 
+To configure on local system: \
 `pip install -r requirements.txt`
 
-To run with Binance:\
+To run with Binance: \
 `python twitter_binance.py`
 
-To run with Kraken:\
+To run with Kraken: \
 `python kraken_binance.py` 
 
 API keys are kept in a json called one directory up from repo ../keys.json
