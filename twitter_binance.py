@@ -89,6 +89,7 @@ else:
 	user = users['me']
 
 # Time after buying before selling
+hold_time = 1
 if not skip_input:
 	print('\nHodl time (s): ')
 	hold_time = input()
@@ -96,8 +97,6 @@ if not skip_input:
 		hold_time = 60
 	else:
 		hold_time = float(hold_time)
-else:
-	hold_time = 1
 
 print('\nHodl time : %.2fs' % hold_time)
 
@@ -117,13 +116,12 @@ else:
 print('\nVolume %.8f %s' % (volume, buy_coin['symbol']))
 
 # Simulation trade or real trade
+simulate = True	
 if not skip_input:
 	print('\nTest y/n:')
 	test = input()
 	simulate = True
 	if test == 'n': simulate = False
-else:
-	simulate = True
 
 if simulate:
 	print('\nSIMULATION TRADING')
@@ -131,10 +129,9 @@ if simulate:
 # Inintilizing a file of jsons to log trades
 
 # Command line argument : "python twitter_binance.py l" (log)
+logfile = False
 if 'l' in sys.argv:
 	logfile = True
-else:
-	logfile = False
 
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])

@@ -2,6 +2,7 @@ import ccxt
 import time
 from datetime import datetime
 import json
+import os
 import sys
 
 # Executes buying and selling
@@ -190,6 +191,8 @@ class binance_api:
 		self.print_summary(simulate, ticker, buy_trade, sell_trade, tousd2)
 		if self.logfile:
 			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
+			if 'prev_trades' not in os.listdir():
+				os.mkdir('prev_trades')
 			with open("prev_trades/trades_%s_binance_%s.txt" % (now,'simulation' if simulate else 'live'), "w") as log_name:
 				json.dump({'time':now,'buy':buy_trade,'sell':sell_trade}, log_name)
 
