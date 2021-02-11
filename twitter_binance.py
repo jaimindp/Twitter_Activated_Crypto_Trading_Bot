@@ -1,12 +1,13 @@
 import tweepy
 import json
 import time
+from datetime import datetime
 from binance_api import *
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True):
+def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True, logfile=None):
 
-	exchange = binance_api(api_keys)
+	exchange = binance_api(api_keys, logfile=logfile)
 
 	while 1:
 		
@@ -58,12 +59,15 @@ cryptos = {'doge':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, \
 # Get user inputs
 print('\nEnter crypto to buy: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
 skip_input = False
+
+# Buy currency
 crypto  = input()
 if not crypto:
 	crypto = 'doge'
 	skip_input = True
 buy_coin = cryptos[crypto]
 
+# Sell currency
 if not skip_input:
 	print('\nEnter currency to sell: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
 	sell_coin  = cryptos[input()]
@@ -72,13 +76,19 @@ else:
 
 pair = [buy_coin['symbol'],sell_coin['symbol']]
 
+# User to track
 if not skip_input:
 	print('\nUser: '+'%s '* len(users) % tuple(users.keys())) 
 	username = input()
-	user = users[username]
+	if username:
+		user = users[username]
+	else:
+		user = users['me']
+		skip_input = True
 else:
 	user = users['me']
 
+# Time after buying before selling
 if not skip_input:
 	print('\nHodl time (s): ')
 	hold_time = input()
@@ -91,7 +101,7 @@ else:
 
 print('\nHodl time : %.2fs' % hold_time)
 
-
+# Amount of crypto to buy (Fastest if fewest queries before buying)
 if not skip_input:
 	print('\nVolume in crypto: ')
 	volume = input()
@@ -106,6 +116,7 @@ else:
 	volume = 50
 print('\nVolume %.8f %s' % (volume, buy_coin['symbol']))
 
+# Simulation trade or real trade
 if not skip_input:
 	print('\nTest y/n:')
 	test = input()
@@ -117,40 +128,18 @@ else:
 if simulate:
 	print('\nSIMULATION TRADING')
 
+# Inintilizing a file of jsons to log trades
+
+# Command line argument : "python twitter_binance.py l" (log)
+if 'l' in sys.argv:
+	logfile = open("../prev_trades/trades_%s_%s_%s_%s_binance.txt" % (datetime.now().strftime("%y-%m-%d_%H-%M")), "w")
+else:
+	logfile = None
+
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
 auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_token_secret'])
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, wait_tweet=not skip_input)
-
-## Another method using streaming (mitigates the wait on rate limit issue)
-
-# import tweepy
-# import time
-# import sys
-# import inspect
-
-# consumer_key = 'xxxxxxxxxxxxxxxxxxx'
-# consumer_secret = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-# access_token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-# access_token_secret = 'xxxxxxxxxxxxxxxx'
-
-# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_token_secret)
-# auth.secure = True
-
-# api = tweepy.API(auth)
-
-# class MyStreamListener(tweepy.StreamListener):
-#     def on_status(self, status):
-#             if  status.user.screen_name.encode('UTF-8').lower() == 'someuser':
-#                 print 'TWEET:', status.text.encode('UTF-8')
-#                 print 'FOLLOWERS:', status.user.followers_count
-#                 print time.ctime()
-#                 print '\n'
-
-# myStreamListener = MyStreamListener()
-# myStream = tweepy.Stream(auth = api.auth, listener=MyStreamListener())
-# myStream.filter(follow=['someuserid'])
+tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, wait_tweet=not skip_input, logfile=logfile)

@@ -2,15 +2,17 @@ import ccxt
 import time
 from datetime import datetime
 import json
+import sys
 
 # Executes buying and selling
 class binance_api:
 
 	# Initialize
-	def __init__(self, api_keys):
+	def __init__(self, api_keys, logfile=None):
 		self.api_keys = {'api_key':api_keys['binance_keys']['api_key'],'secret_key':api_keys['binance_keys']['secret_key']}
 		self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
-
+		self.logfile = logfile
+	
 	# Buying of real cryto
 	def buy_crypto(self, ticker, buy_volume):
 		
@@ -61,82 +63,100 @@ class binance_api:
 				sell_trade = self.exchange.create_order(ticker,'market','sell',sell_volume)
 				print('\nSold')
 				break
+
 			except Exception as e:
 				error = e
 				if 'MIN_NOTIONAL' in str(error):
 					buy_volume = buy_volume *1.0005
 				elif 'insufficient balance' in str(error):
 					buy_volume = buy_volume * 0.9995
+				else:
+					self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 				print(e)
 				print('\n\nTrying to sell %.10f again' % buy_volume)
-
-				self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 		
 		# Print sell
 		avg_price = sum([float(x['price']) * float(x['qty']) for x in sell_trade['info']['fills']])/sum([float(x['qty']) for x in sell_trade['info']['fills']])
-		print('\nSold %s of %s at %s with %s %s of fees on %s' % (sell_trade['amount']\
-					, sell_trade['symbol'], avg_price, sell_trade['fee']['cost'], sell_trade['fee']['currency']\
-					, datetime.now().strftime('%b %d - %H:%M:%S')))
+		print('\nSold %s of %s at %s with %s %s of fees on %s' % (sell_trade['amount'], sell_trade['symbol'], avg_price\
+			  , sell_trade['fee']['cost'], sell_trade['fee']['currency'], datetime.now().strftime('%b %d - %H:%M:%S')))
 
 		return sell_trade
 
 	# Get data from self.exchange and print it 
-	def print_price(self, buy, volume, ticker, conversion):
-		usdpair = self.exchange.fetchTicker(conversion)
-		if buy == True:
-			bid_ask, buy_sell = 'bid', 'Buying'
+	def simulate_trade(self, buy, volume, ticker, conversion):
+		if conversion[-4:] == 'USDT':
+			usdpair = {'bid':1,'ask':1}
 		else:
-			bid_ask, buy_sell = 'ask', 'Selling'
+			usdpair = self.exchange.fetchTicker(conversion)
+		if buy:
+			bid_ask, buy_sell = 'ask', 'Buying'
+		else:
+			bid_ask, buy_sell = 'bid', 'Selling'
 		try:
-			symbol_info = self.exchange.fetchTicker(ticker)[bid_ask]
+			trade_price = self.exchange.fetchTicker(ticker)[bid_ask]
 			price = (usdpair['bid']+usdpair['ask'])/2
-			print('\n{} {} at {:.8f} {} = {:.6f}$'.format(buy_sell, volume, symbol_info, ticker, volume*price))
+			print('\n{} {} at {:.8f} {} = {:.6f}$'.format(buy_sell, volume, trade_price, ticker, trade_price * volume * price))
 
 		except Exception as e:
 			print (e, '\nError in fetching ticker info')
+		trade = {'symbol': ticker,'side':'buy' if buy else 'sell', 'amount':volume, 'cost':trade_price * volume}
+		
+		return trade
 
-	# Summarize trade buy and sell
-	def print_summary(self, ticker, buy_trade, sell_trade, conversion):
-		buy_id, sell_id = buy_trade['info']['orderId'], sell_trade['info']['orderId']
-		buy_prices, sell_prices = [], []
-		for i in range(20):
-			try:
-				trades = self.exchange.fetchMyTrades(ticker,limit = 30)
-			except Exception as e:
-				print(e)
-				print("Couldn't fetch trades, tying again")
-				
-		# Loop over trades as one order could have had multiple fills
-		for trade in trades[::-1]:
-		    if buy_id == trade['info']['orderId']:
-		        buy_prices.append({'amount':trade['amount'],'cost':trade['cost'],'fee':trade['fee']})
-		    elif sell_id == trade['info']['orderId']:
-		        sell_prices.append({'amount':trade['amount'],'cost':trade['cost'],'fee':trade['fee']}) # Actual return uses fills
-		buy_fee = sum([x['fee']['cost'] for x in buy_prices])
-		sell_fee = sum([x['fee']['cost'] for x in sell_prices])        
 
-		for i in range(20):
-			try:
-				if buy_trade['fee']['currency'] == 'BNB':
-				    bnb_dollar = self.exchange.fetch_ticker('BNB/USDT')
-				    bnb_price = (bnb_dollar['bid'] + bnb_dollar['ask']) / 2
-				    buy_fee_dollar = buy_fee * bnb_price
-				    if sell_trade['fee']['currency'] == 'BNB':
-				        sell_fee_dollar = sell_fee * bnb_price
-				else:
-				    buy_crypto_dollar = self.exchange.fetch_ticker(buy_trade['fee']['currency']+'/USDT')
-				    sell_crypto_dollar = self.exchange.fetch_ticker(sell_trade['fee']['currency']+'/USDT')
-				    buy_fee_price = (buy_crypto_dollar['bid']+buy_crypto_dollar['ask'])/2
-				    sell_fee_price = (sell_crypto_dollar['bid']+sell_crypto_dollar['ask'])/2
-				    
-				    buy_fee_dollar = buy_fee_price * buy_fee
-				    sell_fee_dollar = sell_fee_price * sell_fee
+	# Summarise trade buy and sell
+	def print_summary(self, simulate, ticker, buy_trade, sell_trade, conversion):
+		
+		if not simulate:
+			buy_id, sell_id = buy_trade['info']['orderId'], sell_trade['info']['orderId']
+			buy_prices, sell_prices = [], []
+			for i in range(20):
+				try:
+					trades = self.exchange.fetchMyTrades(ticker,limit = 30)
+				except Exception as e:
+					print(e)
+					print("Couldn't fetch trades, tying again")
+					
+			# Loop over trades as one order could have had multiple fills
+			for trade in trades[::-1]:
+			    if buy_id == trade['info']['orderId']:
+			        buy_prices.append({'amount':trade['amount'],'cost':trade['cost'],'fee':trade['fee']})
+			    elif sell_id == trade['info']['orderId']:
+			        sell_prices.append({'amount':trade['amount'],'cost':trade['cost'],'fee':trade['fee']}) # Actual return uses fills
+			buy_fee = sum([x['fee']['cost'] for x in buy_prices])
+			sell_fee = sum([x['fee']['cost'] for x in sell_prices])        
 
-				ticker_pair = ticker.split('/')
-				ticker_info = self.exchange.fetch_ticker(ticker_pair[1]+'/'+'USDT')
-			except Exception as e:
-				print(e)
-				print('Trying fetch again')
+			for i in range(20):
+				try:
+					if buy_trade['fee']['currency'] == 'BNB':
+					    bnb_dollar = self.exchange.fetch_ticker('BNB/USDT')
+					    bnb_price = (bnb_dollar['bid'] + bnb_dollar['ask']) / 2
+					    buy_fee_dollar = buy_fee * bnb_price
+					    if sell_trade['fee']['currency'] == 'BNB':
+					        sell_fee_dollar = sell_fee * bnb_price
+					else:
+					    buy_crypto_dollar = self.exchange.fetch_ticker(buy_trade['fee']['currency']+'/USDT')
+					    sell_crypto_dollar = self.exchange.fetch_ticker(sell_trade['fee']['currency']+'/USDT')
+					    buy_fee_price = (buy_crypto_dollar['bid']+buy_crypto_dollar['ask'])/2
+					    sell_fee_price = (sell_crypto_dollar['bid']+sell_crypto_dollar['ask'])/2
+					    
+					    buy_fee_dollar = buy_fee_price * buy_fee
+					    sell_fee_dollar = sell_fee_price * sell_fee
+
+					ticker_pair = ticker.split('/')
+					if ticker_pair[1] == 'USDT':
+						ticker_info = {'bid':1,'ask':1}
+					else:
+						ticker_info = self.exchange.fetch_ticker(ticker_pair[1]+'/'+'USDT')
+				except Exception as e:
+					print(e)
+					print('Trying fetch again')
+		else:
+			sell_fee_dollar, buy_fee_dollar = 0, 0
+			if ticker[-4:] == 'USDT':
+				ticker_info = {'bid':1, 'ask':1}
+			else:
+				ticker_info = self.exchange.fetch_ticker(ticker.split('/')[1]+'/'+'USDT')
 
 		print('\nGain/Loss: $%.6f' % ((sell_trade['cost'] - buy_trade['cost'])*(ticker_info['bid'] + ticker_info['ask'])\
 		      / 2 - sell_fee_dollar - buy_fee_dollar))
@@ -155,7 +175,7 @@ class binance_api:
 		if not simulate:
 			buy_trade = self.buy_crypto(ticker, buy_volume)
 		else:
-			self.print_price(True, buy_volume, ticker, tousd1)
+			buy_trade = self.simulate_trade(True, buy_volume, ticker, tousd2)
 
 		time.sleep(hold_time)
 
@@ -163,10 +183,13 @@ class binance_api:
 		if not simulate:
 			sell_trade = self.sell_crypto(ticker, buy_volume, buy_trade)
 		else:
-			self.print_price(False, sell_volume, ticker, tousd1)
+			sell_trade = self.simulate_trade(False, sell_volume, ticker, tousd2)
 
 		# Summarize
-		if not simulate:
-			self.print_summary(ticker, buy_trade, sell_trade, tousd2)
+		# if not simulate:
+		self.print_summary(simulate, ticker, buy_trade, sell_trade, tousd2)
+		if self.logfile:
+			json.dumps({'buy':buy_trade,'sell':sell_trade}, self.logfile)
+
 
 

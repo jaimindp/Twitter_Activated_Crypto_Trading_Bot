@@ -32,8 +32,9 @@ API keys are kept in a json called one directory up from repo ../keys.json
 	- Look at streaming twitter rather than querying every second
 - Get a list of accounts to follow and trade ideas
 - Handle Retweets vs. Tweets
-- Test for multiple other cryptos/alt coins
+- Test for multiple other alt coins
 	- Test when ticker symbols are reversed
+- Work out the miniumum amounts for each alt
 - Implement for any alt coin if listed on an exchange
 - Mechanism for pulling out of all positions
 - Limit orders
