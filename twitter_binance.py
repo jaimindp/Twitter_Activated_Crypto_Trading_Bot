@@ -31,14 +31,14 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 				try:
 					new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1,wait_on_rate_limit=True,wait_on_rate_limit_notify=True).items(1))[0]	
 				except Exception as e:
-					print(e,'\nFailed at tweet collector')
+					print(e,'\nFailed at tweet collector\n')
 				time.sleep(1)
 
-			print('\nMoonshot inbound!\n')
 
 		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
+			print('\nMoonshot inbound!')
 			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
-			print('Closed out\n\n')
+			print('\nClosed out\n')
 
 		if not wait_tweet:
 			exit()

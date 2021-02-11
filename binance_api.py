@@ -18,6 +18,7 @@ class binance_api:
 		for i in range(10):
 			try:
 				buy_trade = self.exchange.create_order(ticker,'market','buy',buy_volume)
+				print('\nBought')
 				break
 			except Exception as e:
 				time.sleep(0.5)
@@ -58,6 +59,7 @@ class binance_api:
 				        sell_volume = buy_volume - buy_trade['fee']['cost']
 
 				sell_trade = self.exchange.create_order(ticker,'market','sell',sell_volume)
+				print('\nSold')
 				break
 			except Exception as e:
 				error = e
@@ -68,13 +70,13 @@ class binance_api:
 				print(e)
 				print('\n\nTrying to sell %.10f again' % buy_volume)
 
-			self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
+				self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 		
 		# Print sell
 		avg_price = sum([float(x['price']) * float(x['qty']) for x in sell_trade['info']['fills']])/sum([float(x['qty']) for x in sell_trade['info']['fills']])
-		to_print = '\nSold %s of %s at %s with %s %s of fees on %s' % (sell_trade['amount']\
+		print('\nSold %s of %s at %s with %s %s of fees on %s' % (sell_trade['amount']\
 					, sell_trade['symbol'], avg_price, sell_trade['fee']['cost'], sell_trade['fee']['currency']\
-					, datetime.now().strftime('%b %d - %H:%M:%S'))
+					, datetime.now().strftime('%b %d - %H:%M:%S')))
 
 		return sell_trade
 
@@ -136,9 +138,6 @@ class binance_api:
 				print(e)
 				print('Trying fetch again')
 
-		print(sell_trade['cost'], buy_trade['cost'])
-		print(ticker_info)
-		print(sell_fee_dollar, buy_fee_dollar)
 		print('\nGain/Loss: $%.6f' % ((sell_trade['cost'] - buy_trade['cost'])*(ticker_info['bid'] + ticker_info['ask'])\
 		      / 2 - sell_fee_dollar - buy_fee_dollar))
 
