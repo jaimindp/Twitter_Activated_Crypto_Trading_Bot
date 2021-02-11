@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### Feb 10th 2021 - has been tested on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), successfully made a 17% return from Elon's latest Doge tweet
+### Feb 11th 2021 - has been tested on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), successfully made a 17% & 3% return from Elon's latest Doge tweets
 
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
 
@@ -8,9 +8,16 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 
 When a Tweet is posted, it checks for substring matches with keywords for a particularcryptpcurrency, these keywords can be edited and more cryptos can be added in order to execute the trade
 
-To configure on local system: `pip install -r requirements.txt`
+To configure on local system: 
+`pip install -r requirements.txt`
 
-To run with Binance: `python twitter_binance.py`, to run with Kraken: `python kraken_binance.py` API keys are kept in a json called one directory up from repo ../keys.json
+To run with Binance: 
+`python twitter_binance.py`
+
+To run with Kraken: 
+`python kraken_binance.py` 
+
+API keys are kept in a json called one directory up from repo ../keys.json
 
 ## To Do
 - Backtest (done)
