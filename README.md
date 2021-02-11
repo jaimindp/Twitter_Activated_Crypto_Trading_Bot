@@ -27,11 +27,11 @@ API keys are kept in a json called one directory up from repo ../keys.json
 - Error handling if trade is unclosed (done)
 - Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%) (done)
 - Trade logging json mechanism
-- Verify working on BTC
+- Verify working on BTC (done)
 - Reduce latency between tweet and trade from 2s to < 1s 
 	- Look at streaming twitter rather than querying every second
 - Get a list of accounts to follow and trade ideas
-- Retweets vs. Tweets
+- Handle Retweets vs. Tweets
 - Test for multiple other cryptos/alt coins
 	- Test when ticker symbols are reversed
 - Implement for any alt coin if listed on an exchange
