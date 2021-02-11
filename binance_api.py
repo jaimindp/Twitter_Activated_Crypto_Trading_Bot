@@ -8,7 +8,7 @@ import sys
 class binance_api:
 
 	# Initialize
-	def __init__(self, api_keys, logfile=None):
+	def __init__(self, api_keys, logfile=False):
 		self.api_keys = {'api_key':api_keys['binance_keys']['api_key'],'secret_key':api_keys['binance_keys']['secret_key']}
 		self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 		self.logfile = logfile
@@ -189,7 +189,9 @@ class binance_api:
 		# if not simulate:
 		self.print_summary(simulate, ticker, buy_trade, sell_trade, tousd2)
 		if self.logfile:
-			json.dumps({'buy':buy_trade,'sell':sell_trade}, self.logfile)
+			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
+			with open("prev_trades/trades_%s_binance_%s.txt" % (now,'simulation' if simulate else 'live'), "w") as log_name:
+				json.dump({'time':now,'buy':buy_trade,'sell':sell_trade}, log_name)
 
 
 

@@ -39,10 +39,11 @@ API keys are kept in a json called one directory up from repo ../keys.json
 - Mechanism for pulling out of all positions
 - Limit orders
 	- Trailing stop losses
-- Implement sentiment feature
-	- For size of position 
-	- Shorting 
-- Look at interpreting images (CV for text extraction, object detection on memes) 
+- Machine Learning features
+	- Implement sentiment feature
+		- For size of position 
+		- Shorting 
+	- Look at interpreting images (CV for text extraction, object detection on memes) 
 
 
 ## Notes

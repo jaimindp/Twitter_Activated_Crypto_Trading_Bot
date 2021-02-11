@@ -41,8 +41,8 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
 			print('\nClosed out\n')
 
-		if not wait_tweet:
-			exit()
+		# if not wait_tweet:
+			# exit()
 
 # Read keys
 f = open('../keys.json','r')
@@ -132,9 +132,9 @@ if simulate:
 
 # Command line argument : "python twitter_binance.py l" (log)
 if 'l' in sys.argv:
-	logfile = open("../prev_trades/trades_%s_%s_%s_%s_binance.txt" % (datetime.now().strftime("%y-%m-%d_%H-%M")), "w")
+	logfile = True
 else:
-	logfile = None
+	logfile = False
 
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
