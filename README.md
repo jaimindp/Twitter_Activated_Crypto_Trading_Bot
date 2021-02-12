@@ -30,6 +30,8 @@ API keys are kept in a json called one directory up from repo ../keys.json
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade from 2s to < 1s 
 	- Look at streaming Twitter rather than querying every second
+	- Selenium scraper
+	- Requests module
 - Get a list of accounts to follow and trade ideas
 - Handle Retweets vs. Tweets
 - Transfer list of keywords to text file
