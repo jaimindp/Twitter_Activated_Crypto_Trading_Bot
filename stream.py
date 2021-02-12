@@ -10,40 +10,46 @@ from tweepy.streaming import StreamListener
 
 # Listener class
 class Listener(StreamListener):
-	def __init__(self, ids, output_file=sys.stdout):
+	def __init__(self, ids, log_file=None):
 		super(Listener,self).__init__()
 		self.ids = ids
+		self.log_file = log_file
+
 	
 	def on_status(self, status):
 		# print('\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), status.text, status.user.screen_name, status.user.id_str))
-		# print(str(status.id))
+		# print(status.user.id_str)
+		# print(type(status.user.id_str),type(status.user.id_str))
 		if str(status.user.id_str) in self.ids:
 			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), status.text, status.user.screen_name, status.user.id_str))
 			print(status.created_at)
 			if any(word in status.text.lower() for word in keywords):
 				print('\n\nFOUND AND READY TO BET\n\n')
 				# Execute trade
+				if self.log_file:
+					self.log_file.write(status)
 	
 	def on_error(self, status_code):
 		print(status_code)
 		return False
 
 # Stream tweets
-def stream_tweets(api, users, id_set, keywords=None):
+def stream_tweets(api, users, id_set, keywords=None, log_file=None):
 	
-	output = open('stream_output.txt', 'w')
-	listener = Listener(id_set, output_file=output)
-	stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
+	listener = Listener(id_set, log_file=log_file)
+	stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	try:
-		print('Start streaming')
+		print('Starting stream')
 		stream.filter(follow=users, track=keywords)
 		# stream.filter(follow=users, track=keywords, is_async=True)
-		# stream.filter(follow=users, track=keywords, is_async=True)
+
 	except KeyboardInterrupt as e:
-		print("Stopped.")
+		stream.disconnect()
+		print("Stopped stream")
+		exit()
 	finally:
-		print('Done.')
+		print('Done')
 		stream.disconnect()
 
 
@@ -66,41 +72,15 @@ id_set = set(user_ids)
 keywords = ['btc', 'coin', 'bitcoin', 'breakout']
 keyword_set = set(keywords)
 
+log_file = None
+if 'l' in sys.argv:
+	log_file = open('stream_output.txt', 'a')
 
-# stream_tweets(api, user_ids, keywords)
-stream_tweets(api, user_ids, id_set)
+while 1:
+	stream_tweets(api, user_ids, id_set, keywords, log_file)
+	
 
-
-	# class Listener(StreamListener):
-		
-	# 	def __init__(self, output_file=sys.stdout):
-	# 		super(Listener,self).__init__()
-		
-	# 	def on_status(self, status):
-	# 		now = datetime.now()
-	# 		print(now)
-	# 		print(status.text)
-		
-	# 	def on_error(self, status_code):
-	# 		print(status_code)
-	# 		return False
+# stream_tweets(api, user_ids, id_set)
 
 
-	# output = open('stream_output.txt', 'w')
-	# listener = Listener(output_file=output)
-
-	# stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-	# try:
-	# 	print('Start streaming.')
-	# 	stream.filter(follow=users)
-	# 	# stream.filter(follow=[user[1], user2[1]], is_async=True)
-	# 	# stream.filter(follow=[user[1], user2[1]], is_async=True)
-	# 	print('hi')
-
-	# except KeyboardInterrupt as e :
-	# 	print("Stopped.")
-	# finally:
-	# 	print('Done.')
-	# 	stream.disconnect()
-	# 	output.close()
 
