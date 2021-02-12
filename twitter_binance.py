@@ -30,7 +30,14 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 
 			while new_tweet.full_text == last_tweet.full_text:
 				try:
-					new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1,wait_on_rate_limit=True,wait_on_rate_limit_notify=True).items(1))[0]	
+					new_tweet = api.user_timeline(user_id=user[1], 
+						                           count=1,
+						                           include_rts = True,
+						                           exclude_replies = True,
+						                           tweet_mode = 'extended',
+						                           wait_on_rate_limit=True,
+						                           wait_on_rate_limit_notify=True
+						                           )[0]
 				except Exception as e:
 					print(e,'\nFailed at tweet collector\n')
 				time.sleep(1)
