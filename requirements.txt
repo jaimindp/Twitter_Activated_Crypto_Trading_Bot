@@ -1,2 +1,2 @@
-pykrakenapi
 tweepy
+ccxt
