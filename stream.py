@@ -15,11 +15,14 @@ class Listener(StreamListener):
 		self.ids = ids
 	
 	def on_status(self, status):
-		print(status.user.screen_name)
-		if str(status.id) in self.ids:
-			now = datetime.now()
-			print('\n%s \n\n%s' % (status.text, status.screen_name, status.id))
-			print(now)
+		# print('\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), status.text, status.user.screen_name, status.user.id_str))
+		# print(str(status.id))
+		if str(status.user.id_str) in self.ids:
+			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), status.text, status.user.screen_name, status.user.id_str))
+			print(status.created_at)
+			if any(word in status.text.lower() for word in keywords):
+				print('\n\nFOUND AND READY TO BET\n\n')
+				# Execute trade
 	
 	def on_error(self, status_code):
 		print(status_code)
@@ -35,9 +38,8 @@ def stream_tweets(api, users, id_set, keywords=None):
 	try:
 		print('Start streaming')
 		stream.filter(follow=users, track=keywords)
-		# stream.filter(follow=[user[1], user2[1]], is_async=True)
-		# stream.filter(follow=[user[1], user2[1]], is_async=True)
-		print('hi')
+		# stream.filter(follow=users, track=keywords, is_async=True)
+		# stream.filter(follow=users, track=keywords, is_async=True)
 	except KeyboardInterrupt as e:
 		print("Stopped.")
 	finally:
@@ -62,6 +64,8 @@ user_ids = list(map(lambda x:str(x[1]), users))
 id_set = set(user_ids)
 
 keywords = ['btc', 'coin', 'bitcoin', 'breakout']
+keyword_set = set(keywords)
+
 
 # stream_tweets(api, user_ids, keywords)
 stream_tweets(api, user_ids, id_set)

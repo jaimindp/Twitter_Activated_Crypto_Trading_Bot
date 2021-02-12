@@ -41,7 +41,7 @@ class binance_api:
 
 	# Selling of real crypto
 	def sell_crypto(self, ticker, buy_volume, buy_trade):
-		for i in range(100):
+		for i in range(10):
 			try:				
 				if buy_trade['fee']['currency'] == 'BNB':
 				    sell_volume = buy_volume
