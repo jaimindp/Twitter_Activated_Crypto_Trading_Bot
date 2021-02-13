@@ -29,21 +29,24 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 			print('\nWaiting for {} to tweet\n'.format(user[0]))
 
 			while new_tweet.full_text == last_tweet.full_text:
+				time.sleep(1)
 				try:
-					new_tweet = api.user_timeline(user_id=user[1], 
-						                           count=1,
-						                           include_rts = True,
-						                           exclude_replies = True,
-						                           tweet_mode = 'extended',
-						                           wait_on_rate_limit=True,
-						                           wait_on_rate_limit_notify=True
-						                           )[0]
+					new_tweet = api.user_timeline(user_id=user[1],
+						                          count=1,
+						                          include_rts = True,
+						                          exclude_replies = True,
+						                          tweet_mode = 'extended',
+						                          wait_on_rate_limit=True,
+						                          wait_on_rate_limit_notify=True
+						                          )[0]
 				except Exception as e:
 					print(e,'\nFailed at tweet collector\n')
-				time.sleep(1)
+			rt_flag = new_tweet.retweeted
+		else:
+			rt_flag = False
+		
 
-
-		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
+		if not wait_tweet or not rt_flag or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
 			print('\nMoonshot inbound!')
 			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
 			print('\nClosed out\n')
@@ -52,15 +55,22 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 			# exit()
 
 # Read keys
+# f = open('../keys.json','r')
 f = open('../keys.json','r')
 api_keys = json.loads(f.read())
 f.close()
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
+########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS
+f2 = open('../twitter_keys2.json') 
+api_keys2 = json.loads(f2.read())
+twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
+f2.close()
+
 # User and crypto selection
-users ={'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]} 
-cryptos = {'doge':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, \
-		   'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},\
+users = {'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]}
+cryptos = {'doge':{'triggers':['doge','hodl','doggo','oge','coin'],'symbol':'DOGE'}, \
+		   'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'}, \
 		   'usd':{'symbol':'USD'},'usdt':{'symbol':'USDT'},'gbp':{'symbol':'GBP'}}
 
 # Get user inputs
@@ -81,7 +91,7 @@ if not skip_input:
 else:
 	sell_coin = cryptos['btc']
 
-pair = [buy_coin['symbol'],sell_coin['symbol']]
+pair = [buy_coin['symbol'], sell_coin['symbol']]
 
 # User to track
 if not skip_input:
