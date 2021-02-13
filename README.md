@@ -28,12 +28,12 @@ API keys are kept in a json called one directory up from repo ../keys.json
 - Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%) (done)
 - Trade logging json mechanism (done)
 - Verify working using BTC transactions (done)
-- Reduce latency between tweet and trade from 2s to < 1s 
-	- Look at streaming Twitter rather than querying every second
-	- Selenium scraper
-	- Requests module
+- Reduce latency between tweet and trade from 2s to < 1s (done)
+	- Look at streaming Twitter rather than querying every second (slower ~ 5s))
+	- Selenium scraper (slow)
+	- Requests module (doesn't work)
 - Get a list of accounts to follow and trade ideas
-- Handle Retweets vs. Tweets
+- Handle Retweets vs. Tweets (done)
 - Transfer list of keywords to text file
 - Test for multiple other alt coins
 	- Test when ticker symbols are reversed
