@@ -45,7 +45,7 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 		else:
 			rt_flag = False
 		
-
+		# rt_flag for elon and dogecoin specifically
 		if not wait_tweet or not rt_flag or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
 			print('\nMoonshot inbound!')
 			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
@@ -55,17 +55,17 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 			# exit()
 
 # Read keys
-# f = open('../keys.json','r')
 f = open('../keys.json','r')
 api_keys = json.loads(f.read())
 f.close()
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
-########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS
-# f2 = open('../twitter_keys2.json') 
-# api_keys2 = json.loads(f2.read())
-# twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
-# f2.close()
+# Use second group of twitter api keys
+if '2' in sys.argv:
+	f2 = open('../twitter_keys2.json') 
+	api_keys2 = json.loads(f2.read())
+	twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
+	f2.close()
 
 # User and crypto selection
 users = {'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]}
