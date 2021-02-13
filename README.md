@@ -19,7 +19,18 @@ To run with Binance: \
 To run with Kraken: \
 `python twitter_kraken.py` 
 
-API keys are kept in a json called one directory up from repo ../keys.json
+API keys are kept in a json directory up from repo ../keys.json
+`{\
+	"twitter_keys" : {\
+		"consumer_key": "XXXXXXXXXXXXXXXXXXXX",\
+		"consumer_secret":"XXXXXXXXXXXXXXXXXXXX",\
+		"access_token_key":"XXXXXXXXXXXXXXXXXXXX",\
+		"access_token_secret":"XXXXXXXXXXXXXXXXXXXX"},\
+	"binance_keys":{\
+		"api_key":"XXXXXXXXXXXXXXXXXXXX" ,\
+		"secret_key":"XXXXXXXXXXXXXXXXXXXX"\
+	}\
+}`
 
 ## To Do
 - User input parameters (done)
