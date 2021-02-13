@@ -41,44 +41,34 @@ API keys are kept in a json directory up from repo ../keys.json
 - Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%) (done)
 - Trade logging json mechanism (done)
 - Verify working using BTC transactions (done)
-- Reduce latency between tweet and trade from 2s to < 1s (done)
+- Reduce latency between tweet and trade to 2s (done)
 	- Look at streaming Twitter rather than querying every second (slower ~ 5s))
 		- Integrate streaming
 	- Selenium scraper (slow)
 	- Requests module (doesn't work with Twitter)
 - Get a list of accounts to follow and trade ideas
 - Handle Retweets vs. Tweets (done)
-- Transfer list of keywords to text file
+- Create keyword list in text file
+	- Keyword confidences = position size
 - Test for multiple other alt coins
-	- Test when ticker symbols are reversed
+- Test when ticker symbols are reversed
 - Work out the amount to buy for each alt
 	- Find a reasonable amount to trade based of previous exchange rates in £/$
 	- Keep a list of exchange rates in mem or in text file and update a a certain freq / at the start
-- Implement for any alt coin if listed on Binance or Kraken
-- Mechanism for pulling out of all positions
-- Backtest Notebook to backtest ideas
-- Implement sell options
+- Implement for any  previously untraded alt coin if listed on Binance or Kraken
+- Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
 	- Trailing stop losses
-- Position size as a fraction of the max
-	- Based on particular keyword
-	- Based on tweet type
-	- Based on time since last tweeted about
-	- Based on sentiment
 - Machine Learning features
-	- Implement sentiment feature
+	- Sentiment feature
 		- For size of position 
-		- Shorting 
-	- Look at interpreting images (CV for text extraction, object detection on memes) 
+		- Shorting
+	- Look at interpreting images (CV for text extraction, object detection on memes)
 
 
 ## Notes
 - Requires a Twitter Developer API detecting tweets through Tweepy
-- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt
-	- Uses ccxt (cryptocurrency exchange trading library which has support for a huge number of exchanges and APIs)
-
-
-
-
+- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
+	- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult)
 
