@@ -20,16 +20,16 @@ To run with Kraken: \
 `python twitter_kraken.py` 
 
 API keys are kept in a json directory up from repo ../keys.json
-`{\
-	"twitter_keys" : {\
-		"consumer_key": "XXXXXXXXXXXXXXXXXXXX",\
-		"consumer_secret":"XXXXXXXXXXXXXXXXXXXX",\
-		"access_token_key":"XXXXXXXXXXXXXXXXXXXX",\
-		"access_token_secret":"XXXXXXXXXXXXXXXXXXXX"},\
-	"binance_keys":{\
-		"api_key":"XXXXXXXXXXXXXXXXXXXX" ,\
-		"secret_key":"XXXXXXXXXXXXXXXXXXXX"\
-	}\
+`{\n
+	"twitter_keys" : {\n
+		"consumer_key": "XXXXXXXXXXXXXXXXXXXX",\n
+		"consumer_secret":"XXXXXXXXXXXXXXXXXXXX",\n
+		"access_token_key":"XXXXXXXXXXXXXXXXXXXX",\n
+		"access_token_secret":"XXXXXXXXXXXXXXXXXXXX"},\n
+	"binance_keys":{\n
+		"api_key":"XXXXXXXXXXXXXXXXXXXX" ,\n
+		"secret_key":"XXXXXXXXXXXXXXXXXXXX"\n
+	}\n
 }`
 
 ## To Do
