@@ -22,7 +22,6 @@ To run with Kraken: \
 API keys are kept in a json called one directory up from repo ../keys.json
 
 ## To Do
-- Backtest (done)
 - User input parameters (done)
 - Error handling if trade is unclosed (done)
 - Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%) (done)
@@ -30,21 +29,29 @@ API keys are kept in a json called one directory up from repo ../keys.json
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade from 2s to < 1s (done)
 	- Look at streaming Twitter rather than querying every second (slower ~ 5s))
+		- Integrate streaming
 	- Selenium scraper (slow)
-	- Requests module (doesn't work)
+	- Requests module (doesn't work with Twitter)
 - Get a list of accounts to follow and trade ideas
 - Handle Retweets vs. Tweets (done)
 - Transfer list of keywords to text file
 - Test for multiple other alt coins
 	- Test when ticker symbols are reversed
-- Work out the miniumum amounts for each alt
-	- Find a reasonable amount to trade based of or previous exchange rates
-- Implement for any alt coin if listed on an exchange
+- Work out the amount to buy for each alt
+	- Find a reasonable amount to trade based of previous exchange rates in £/$
+	- Keep a list of exchange rates in mem or in text file and update a a certain freq / at the start
+- Implement for any alt coin if listed on Binance or Kraken
 - Mechanism for pulling out of all positions
+- Backtest Notebook to backtest ideas
 - Implement sell options
 	- Specified % gain
 	- Limit order at a price target
 	- Trailing stop losses
+- Position size as a fraction of the max
+	- Based on particular keyword
+	- Based on tweet type
+	- Based on time since last tweeted about
+	- Based on sentiment
 - Machine Learning features
 	- Implement sentiment feature
 		- For size of position 
