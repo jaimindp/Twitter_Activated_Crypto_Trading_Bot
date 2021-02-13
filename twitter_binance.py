@@ -62,10 +62,10 @@ f.close()
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
 ########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS########## REMOVE THIS
-f2 = open('../twitter_keys2.json') 
-api_keys2 = json.loads(f2.read())
-twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
-f2.close()
+# f2 = open('../twitter_keys2.json') 
+# api_keys2 = json.loads(f2.read())
+# twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
+# f2.close()
 
 # User and crypto selection
 users = {'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]}
