@@ -17,7 +17,7 @@ To run with Binance: \
 `python twitter_binance.py`
 
 To run with Kraken: \
-`python kraken_api.py` 
+`python twitter_kraken.py` 
 
 API keys are kept in a json called one directory up from repo ../keys.json
 
