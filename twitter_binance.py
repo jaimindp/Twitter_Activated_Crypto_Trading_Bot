@@ -41,12 +41,12 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 						                          )[0]
 				except Exception as e:
 					print(e,'\nFailed at tweet collector\n')
-			rt_flag = new_tweet.retweeted
-		else:
-			rt_flag = False
+		# 	rt_flag = new_tweet.retweeted
+		# else:
+		# 	rt_flag = False
 		
 		# rt_flag for elon and dogecoin specifically
-		if not wait_tweet or not rt_flag or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
+		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
 			print('\nMoonshot inbound!')
 			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
 			print('\nClosed out\n')
