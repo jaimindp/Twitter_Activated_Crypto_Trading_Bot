@@ -69,7 +69,7 @@ if '2' in sys.argv:
 
 # User and crypto selection
 users = {'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]}
-cryptos = {'doge':{'triggers':['doge','hodl','doggo','oge','coin','dog'],'symbol':'DOGE'}, \
+cryptos = {'doge':{'triggers':['doge','hodl','doggo','oge','coin','dog','ð'],'symbol':'DOGE'}, \
 		   'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'}, \
 		   'usd':{'symbol':'USD'},'usdt':{'symbol':'USDT'},'gbp':{'symbol':'GBP'}}
 
