@@ -19,7 +19,7 @@ To run with Binance: \
 To run with Kraken: \
 `python twitter_kraken.py` 
 
-API keys are kept in a json directory up from repo ../keys.json
+API keys are kept in a json, one directory up from repo ../keys.json
 ```
 {
     "twitter_keys":{
@@ -38,11 +38,11 @@ API keys are kept in a json directory up from repo ../keys.json
 ## To Do
 - User input parameters (done)
 - Error handling if trade is unclosed (done)
-- Fully implement Binance (lower taker/maker fees - 0.01% compared to Krakens 0.26%) (done)
+- Fully implement Binance (lower taker/maker fees - 0.1% compared to Krakens 0.26%) (done)
 - Trade logging json mechanism (done)
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade to 2s (done)
-	- Look at streaming Twitter rather than querying every second (slower ~ 5s))
+	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s))
 		- Integrate streaming
 	- Selenium scraper (slow)
 	- Requests module (doesn't work with Twitter)
