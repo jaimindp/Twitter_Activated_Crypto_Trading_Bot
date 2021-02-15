@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### Feb 11th 2021 - has been tested on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), successfully made a 17% & 3% return from Elon's latest Doge tweets
+### Feb 14th 2021 - has been tested on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), successfully made a 17%, 3% & 7% return from Elon's latest Doge tweets
 
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
 
