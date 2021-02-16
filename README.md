@@ -31,7 +31,8 @@ API keys are kept in a json, one directory up from repo ../keys.json
     "binance_keys":{
         "api_key":"XXXXXXXXXXXXXXXXXXXX",
         "secret_key":"XXXXXXXXXXXXXXXXXXXX"
-    }
+    },
+	"kraken_keys":{XXXXXX}
 }
 ```
 
@@ -42,6 +43,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Trade logging json mechanism (done)
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade to 2s (done)
+	- Use 1 query / s or using multiple keys to get n / s for faster buy execution (done)
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s))
 		- Integrate streaming
 	- Selenium scraper (slow)
