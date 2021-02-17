@@ -39,11 +39,11 @@ API keys are kept in a json, one directory up from repo ../keys.json
 ## To Do
 - User input parameters (done)
 - Error handling if trade is unclosed (done)
-- Fully implement Binance (lower taker/maker fees - 0.1% compared to Krakens 0.26%) (done)
+- Fully implement Binance (lower taker/maker fees < 0.1% compared to Krakens 0.26%) (done)
 - Trade logging json mechanism (done)
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade to 2s (done)
-	- Use 1 query / s or using multiple keys to get n / s for faster buy execution (done)
+	- Use 1 query/s or using multiple keys to get n/s for faster buy execution (done)
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s))
 		- Integrate streaming
 	- Selenium scraper (slow)
@@ -61,7 +61,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
-	- Trailing stop losses
+	- Trailing stop losses (Can use ccxt for this)
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
