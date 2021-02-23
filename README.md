@@ -32,7 +32,14 @@ API keys are kept in a json, one directory up from repo ../keys.json
         "api_key":"XXXXXXXXXXXXXXXXXXXX",
         "secret_key":"XXXXXXXXXXXXXXXXXXXX"
     },
+<<<<<<< HEAD
 	"kraken_keys":{XXXXXX}
+=======
+    "kraken_keys":{
+    	"api_key":"XXXXXXXXXXXXXXXXXXXX",
+        "secret_key":"XXXXXXXXXXXXXXXXXXXX"
+    }
+>>>>>>> 1208b7b... updated readme
 }
 ```
 
