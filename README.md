@@ -17,7 +17,7 @@ To run with Binance: \
 `python twitter_binance.py`
 
 To run with Kraken: \
-`python twitter_kraken.py` 
+`python twitter_kraken.py`
 
 API keys are kept in a json, one directory up from repo ../keys.json
 ```
@@ -57,6 +57,12 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Requests module (doesn't work with Twitter)
 	- Beautifulsoup
 - Get a list of accounts to follow and trade ideas
+<<<<<<< HEAD
+=======
+- Implement futures trading to leverage larger sums of money (Not on github)
+	- USD(S)(Stablecoin pegged) currently USDT (Done)
+	- Coin(m) (Crypto pegged)
+>>>>>>> 350aab9... keyword jsons
 - Handle Retweets vs. Tweets (done)
 - Create keyword list in text file
 	- Keyword confidences = position size
