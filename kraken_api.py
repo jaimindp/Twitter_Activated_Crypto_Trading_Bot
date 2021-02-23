@@ -5,7 +5,7 @@ import time
 # Executes buying and selling
 def execute_trade(keys, pair, hold_time=60, buy_volume=50, simulate=False):
 
-	kraken_keys = {'api_key':keys['krakenapi_keys']['api_key'],'secret_key':keys['krakenapi_keys']['secret_key']}
+	kraken_keys = {'api_key':keys['kraken_keys']['api_key'],'secret_key':keys['kraken_keys']['secret_key']}
 	k = ccxt.kraken({'apiKey':kraken_keys['api_key'], 'secret':kraken_keys['secret_key']})
 
 	# Ticker and convesion to USD strings for Kraken
