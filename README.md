@@ -57,7 +57,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Implement futures trading to leverage larger sums of money (Not on github)
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
 	- Coin(m), Crypto pegged BTC or ETH
-- Handle Retweets vs. Tweets (done)
+- Handle Retweets vs. Tweets
 - Create keyword list in json file (done)
 	- Keyword confidences = position size
 - Test for multiple other alt coins

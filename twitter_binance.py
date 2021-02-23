@@ -3,75 +3,75 @@ import json
 import time
 from datetime import datetime
 from binance_api import *
+import ast
 
 # Checks if a tweet from a user contains a particular trigger word
 def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True, logfile=None):
 
 	exchange = binance_api(api_keys, logfile=logfile)
 
-	while 1:
-		
+	while 1:		
 		# Bypass the need to check twitter for testing if tweet = False
 		if wait_tweet:
 			try:
 				tweets = api.user_timeline(user_id=user[1], 
-				                           count=1,
-				                           include_rts = True,
-				                           exclude_replies = True,
-				                           tweet_mode = 'extended',
-				                           wait_on_rate_limit=True,
-				                           wait_on_rate_limit_notify=True
-				                           )
+										   count=1,
+										   include_rts = True,
+										   exclude_replies = True,
+										   tweet_mode = 'extended',
+										   wait_on_rate_limit=True,
+										   wait_on_rate_limit_notify=True
+										   )
 			except Exception as e:
 				print('couldnt get first tweet')
 				continue
 			last_tweet = new_tweet = tweets[0]
 			print('\nWaiting for {} to tweet\n'.format(user[0]))
 
+			# Loop and sleep for a second to check when the last tweet has changed (e.g. when user has tweeted)
 			while new_tweet.full_text == last_tweet.full_text:
-				time.sleep(1)
 				try:
 					new_tweet = api.user_timeline(user_id=user[1],
-						                          count=1,
-						                          include_rts = True,
-						                          exclude_replies = True,
-						                          tweet_mode = 'extended',
-						                          wait_on_rate_limit=True,
-						                          wait_on_rate_limit_notify=True
-						                          )[0]
+												  count=1,
+												  include_rts = True,
+												  exclude_replies = True,
+												  tweet_mode = 'extended',
+												  wait_on_rate_limit=True,
+												  wait_on_rate_limit_notify=True
+												  )[0]
+					time.sleep(1)
 				except Exception as e:
-					print(e,'\nFailed at tweet collector\n')
-		# 	rt_flag = new_tweet.retweeted
-		# else:
-		# 	rt_flag = False
-		
-		# rt_flag for elon and dogecoin specifically
+					print(e,'\nTemporarilty failed at tweet collector\n')
+					print('\nWaiting for {} to tweet\n'.format(user[0]))
+		else:
+			new_tweet = {'full_text':'Fake tweet about dogecoin or something','created_at':datetime.now()}
+
 		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
-			print('\nMoonshot inbound!')
+			trigger_time = datetime.now()
+			print('\nMoonshot inbound!  -  %s' % (trigger_time.strftime('%b %d - %H:%M:%S')))
 			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
-			print('\nClosed out\n')
+			if wait_tweet:
+				print('\nClosed out on Tweet: "%s" created at : %s\n' %(new_tweet.full_text, new_tweet.created_at.strftime('%b %d - %H:%M:%S')))
+			else:
+				print('\nClosed out on tweet at %s\n' %(datetime.now().strftime('%b %d - %H:%M:%S')))
 
-		# if not wait_tweet:
-			# exit()
+# Loads a json file
+def load_json(filepath):
+	with open(filepath) as json_file:
+		return json.load(json_file)
 
-# Read keys
-f = open('../keys.json','r')
-api_keys = json.loads(f.read())
-f.close()
+# Load keys, keywords and users 
+api_keys = load_json('../keys.json')
+users = load_json('users.json')
+cryptos = load_json('keywords.json')
+
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
 # Use second group of twitter api keys
-if '2' in sys.argv:
-	f2 = open('../twitter_keys2.json') 
-	api_keys2 = json.loads(f2.read())
+if '2' in sys.argv:	
+	api_keys2 = load_json('../twitter_keys2.json')
 	twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
-	f2.close()
 
-# User and crypto selection
-users = {'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]}
-cryptos = {'doge':{'triggers':['doge','hodl','doggo','oge','coin','dog','ð'],'symbol':'DOGE'}, \
-		   'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'}, \
-		   'usd':{'symbol':'USD'},'usdt':{'symbol':'USDT'},'gbp':{'symbol':'GBP'}}
 
 # Get user inputs
 print('\nEnter crypto to buy: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
@@ -106,16 +106,17 @@ else:
 	user = users['me']
 
 # Time after buying before selling
-hold_time = 1
+hold_time = [1]
 if not skip_input:
-	print('\nHodl time (s): ')
+	print('\nHodl time(s) seconds e.g. 200 or 30,60,90: ')
 	hold_time = input()
 	if not hold_time:
-		hold_time = 60
-	else:
-		hold_time = float(hold_time)
+		hold_time = [30,60,90]
+	
+	hold_time = ast.literal_eval('['+hold_time+']')
+	print(hold_time)
 
-print('\nHodl time : %.2fs' % hold_time)
+print('\nHodl time :'+'%.2fs '*len(hold_time) % tuple(hold_time))
 
 # Amount of crypto to buy (Fastest if fewest queries before buying)
 if not skip_input:
@@ -144,8 +145,6 @@ if simulate:
 	print('\nSIMULATION TRADING')
 
 # Inintilizing a file of jsons to log trades
-
-# Command line argument : "python twitter_binance.py l" (log)
 logfile = False
 if 'l' in sys.argv:
 	logfile = True
