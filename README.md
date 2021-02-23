@@ -55,7 +55,6 @@ API keys are kept in a json, one directory up from repo ../keys.json
 		- Integrate streaming
 	- Selenium scraper (slow)
 	- Requests module (doesn't work with Twitter)
-	- Beautifulsoup
 - Get a list of accounts to follow and trade ideas
 <<<<<<< HEAD
 =======
