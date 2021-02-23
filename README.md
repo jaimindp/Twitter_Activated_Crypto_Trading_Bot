@@ -1,6 +1,7 @@
 # Tweet Activated Crypto Trader
 
-### Feb 14th 2021 - has been tested on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), successfully made a 17%, 3% & 7% return from Elon's latest Doge tweets
+### Feb 21st 2021 - Set up for futures trading which can use leverage up to 20x. Successfully returned 120% (DOGE/USDT Perpetual) from Elon's latest doge tweet. 
+Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
 
@@ -32,14 +33,10 @@ API keys are kept in a json, one directory up from repo ../keys.json
         "api_key":"XXXXXXXXXXXXXXXXXXXX",
         "secret_key":"XXXXXXXXXXXXXXXXXXXX"
     },
-<<<<<<< HEAD
-	"kraken_keys":{XXXXXX}
-=======
     "kraken_keys":{
     	"api_key":"XXXXXXXXXXXXXXXXXXXX",
         "secret_key":"XXXXXXXXXXXXXXXXXXXX"
     }
->>>>>>> 1208b7b... updated readme
 }
 ```
 
@@ -56,12 +53,9 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Selenium scraper (slow)
 	- Requests module (doesn't work with Twitter)
 - Get a list of accounts to follow and trade ideas
-<<<<<<< HEAD
-=======
 - Implement futures trading to leverage larger sums of money (Not on github)
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
 	- Coin(m) (Crypto pegged)
->>>>>>> 350aab9... keyword jsons
 - Handle Retweets vs. Tweets (done)
 - Create keyword list in text file
 	- Keyword confidences = position size
