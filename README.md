@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### Feb 21st 2021 - Set up for futures trading which can use leverage up to 20x. Successfully returned 120% (DOGE/USDT Perpetual) from Elon's latest doge tweet. 
+### Feb 21st 2021 - Set up for futures trading (not on github) which can use leverage up to 20x. Successfully returned 120% (DOGE/USDT Perpetual) from Elon's latest doge tweet. 
 Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
