@@ -48,11 +48,11 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Trade logging json mechanism (done)
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade to 2s (done)
-	- Use 1 query/s or using multiple keys to get n/s for faster buy execution (done)
-	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s))
+	- Use 1 query/s maximum from Twitter keys
+	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
 		- Integrate streaming
 	- Selenium scraper (slow)
-	- Requests module (doesn't work with Twitter)
+	- Requests package (doesn't work with Twitter)
 - Get a list of accounts to follow and trade ideas
 - Implement futures trading to leverage larger sums of money (Not on github)
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
@@ -65,17 +65,18 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Test when ticker symbols are reversed
 - Work out the amount to buy for each alt
 	- Find a reasonable amount to trade based of previous exchange rates in £/$
-	- Keep a list of exchange rates in mem or in text file and update a a certain freq / at the start
-- Implement for any  previously untraded alt coin if listed on Binance or Kraken
+	- Keep a list of exchange rates in memory or in text file and update a a certain freq / at the start
+- Implement for any previously untraded alt coin if listed on Binance or Kraken
 - Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
 	- Trailing stop losses (Can use ccxt for this)
+	- Sell in chunks over user specified time (done)
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
 		- Shorting
-	- Look at interpreting images (CV for text extraction, object detection on memes)
+	- Interpreting images (CV for text extraction, object detection on memes)
 
 
 ## Notes
