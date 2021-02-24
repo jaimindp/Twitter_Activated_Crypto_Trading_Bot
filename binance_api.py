@@ -226,7 +226,7 @@ class binance_api:
 			if 'prev_trades' not in os.listdir():
 				os.mkdir('prev_trades')
 			with open("prev_trades/trades_%s_binance_%s.txt" % (now,'simulation' if simulate else 'live'), "w") as log_name:
-				json.dump({'time':now,'buy':buy_trade,'sell':sell_trade}, log_name)
+				json.dump({'time':now,'buy':buy_trade,'sell':sell_trades}, log_name)
 
 
 

@@ -2,9 +2,13 @@ import tweepy
 import json
 import time
 from kraken_api import *
+from datetime import datetime
+import ast
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True):
+def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True, logfile=None):
+	
+	exchange = kraken_api(api_keys, logfile=logfile)
 
 	while 1:
 		
@@ -27,68 +31,95 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 
 			while new_tweet.full_text == last_tweet.full_text:
 				try:
-					new_tweet = list(tweepy.Cursor(api.user_timeline, user_id=user[1], include_rts=True, exclude_replies=True, tweet_mode="extended", count=1,wait_on_rate_limit=True,wait_on_rate_limit_notify=True).items(1))[0]	
+					new_tweet = api.user_timeline(user_id=user[1],
+												  count=1,
+												  include_rts = True,
+												  exclude_replies = True,
+												  tweet_mode = 'extended',
+												  wait_on_rate_limit=True,
+												  wait_on_rate_limit_notify=True
+												  )[0]
+					time.sleep(1)				
 				except Exception as e:
-					print(e,'\nFailed at tweet collector')
-				time.sleep(1)
+					print(e,'\nTemporarilty failed at tweet collector\n')
+					print('\nWaiting for {} to tweet\n'.format(user[0]))
 
-			print('\nMoonshot inbound!\n')
+		else:
+			new_tweet = {'full_text':'Fake tweet about dogecoin or something','created_at':datetime.now()}
 
+		
 		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
-			execute_trade(api_keys, pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
-			print('Closed out\n\n')
+			trigger_time = datetime.now()
+			print('\nMoonshot inbound!  -  %s' % (trigger_time.strftime('%b %d - %H:%M:%S')))
+			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
+			if wait_tweet:
+				print('\nClosed out on Tweet: "%s" created at : %s\n' %(new_tweet.full_text, new_tweet.created_at.strftime('%b %d - %H:%M:%S')))
+			else:
+				print('\nClosed out on tweet at %s\n' %(datetime.now().strftime('%b %d - %H:%M:%S')))
 
-		if not wait_tweet:
-			exit()
+# Loads a json file
+def load_json(filepath):
+	with open(filepath) as json_file:
+		return json.load(json_file)
 
-# Read keys
-f = open('../keys.json','r')
-api_keys = json.loads(f.read())
-f.close()
+# Load keys, keywords and users
+api_keys = load_json('../keys.json')
+users = load_json('users.json')
+cryptos = load_json('keywords.json')
+
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
-
-# User and crypto selection
-users ={'elon':['elonmusk',44196397], 'me':['ArbitrageDaddy', 1351770767130673152]} 
-cryptos = {'doge':{'triggers':['doge',' ','hodl','doggo'],'symbol':'DOGE'}, 'btc':{'triggers':['bitcoin', 'btc',' crypto', 'buttcoin'],'symbol':'BTC'},'usd':{'symbol':'USD'}}
+# Use second group of twitter api keys
+if '2' in sys.argv:	
+	api_keys2 = load_json('../twitter_keys2.json')
+	twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
 
 # Get user inputs
 print('\nEnter crypto to buy: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
 skip_input = False
+
+# Buy currency
 crypto  = input()
 if not crypto:
 	crypto = 'doge'
 	skip_input = True
 buy_coin = cryptos[crypto]
 
+# Sell currency
 if not skip_input:
 	print('\nEnter currency to sell: '+'%s '* len(cryptos) % tuple(cryptos.keys()))
 	sell_coin  = cryptos[input()]
 else:
 	sell_coin = cryptos['btc']
 
-pair = [buy_coin['symbol'],sell_coin['symbol']]
+pair = [buy_coin['symbol'], sell_coin['symbol']]
 
+# User to track
 if not skip_input:
 	print('\nUser: '+'%s '* len(users) % tuple(users.keys())) 
 	username = input()
-	user = users[username]
+	if username:
+		user = users[username]
+	else:
+		user = users['me']
+		skip_input = True
 else:
 	user = users['me']
 
+# Time after buying before selling
+hold_time = [1]
 if not skip_input:
-	print('\nHodl time (s): ')
+	print('\nHodl time(s) seconds e.g. 200 or 30,60,90: ')
 	hold_time = input()
 	if not hold_time:
-		hold_time = 60
-	else:
-		hold_time = float(hold_time)
-else:
-	hold_time = 1
+		hold_time = [30,60,90]
+	
+	hold_time = ast.literal_eval('['+hold_time+']')
+	print(hold_time)
 
-print('\nHodl time : %.2fs' % hold_time)
+print('\nHodl time :'+'%.2fs '*len(hold_time) % tuple(hold_time))
 
-
+# Amount of crypto to buy (Fastest if fewest queries before buying)
 if not skip_input:
 	print('\nVolume in crypto: ')
 	volume = input()
@@ -103,14 +134,21 @@ else:
 	volume = 50
 print('\nVolume %.8f %s' % (volume, buy_coin['symbol']))
 
+# Simulation trade or real trade
+simulate = True	
 if not skip_input:
 	print('\nTest y/n:')
 	test = input()
 	simulate = True
 	if test == 'n': simulate = False
-else:
-	simulate = True
 
+if simulate:
+	print('\nSIMULATION TRADING')
+
+# Inintilizing a file of jsons to log trades
+logfile = False
+if 'l' in sys.argv:
+	logfile = True
 
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
@@ -118,34 +156,4 @@ auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_tok
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, wait_tweet=not skip_input)
-
-## Another method using streaming (mitigates the wait on rate limit issue)
-
-# import tweepy
-# import time
-# import sys
-# import inspect
-
-# consumer_key = 'xxxxxxxxxxxxxxxxxxx'
-# consumer_secret = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-# access_token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-# access_token_secret = 'xxxxxxxxxxxxxxxx'
-
-# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_token_secret)
-# auth.secure = True
-
-# api = tweepy.API(auth)
-
-# class MyStreamListener(tweepy.StreamListener):
-#     def on_status(self, status):
-#             if  status.user.screen_name.encode('UTF-8').lower() == 'someuser':
-#                 print 'TWEET:', status.text.encode('UTF-8')
-#                 print 'FOLLOWERS:', status.user.followers_count
-#                 print time.ctime()
-#                 print '\n'
-
-# myStreamListener = MyStreamListener()
-# myStream = tweepy.Stream(auth = api.auth, listener=MyStreamListener())
-# myStream.filter(follow=['someuserid'])
+tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, wait_tweet=not skip_input, logfile=logfile)
