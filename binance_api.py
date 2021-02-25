@@ -18,20 +18,32 @@ class binance_api:
 	def buy_crypto(self, ticker, buy_volume):
 		
 		# Try creating the buy order
-		buy_trade = self.exchange.create_order(ticker,'market','buy',buy_volume)
-		print('\nBought')
-				
-		
-		# Print buy
-		if buy_trade['status'] != 'open':
-			avg_price = sum([float(x['price']) * float(x['qty']) for x in buy_trade['info']['fills']])/sum([float(x['qty']) for x in buy_trade['info']['fills']])
-			print('\nBought %s of %s at %s with %s %s of fees on %s' % (buy_trade['amount']\
-				  , buy_trade['symbol'], avg_price, buy_trade['fee']['cost'], buy_trade['fee']['currency']\
-				  , datetime.now().strftime('%b %d - %H:%M:%S')))
-		else:
-			print('\nBought %.8f at %s' % (buy_volume, datetime.now().strftime('%b %d - %H:%M:%S')))
+		for i in range(10):
+			try:
+				buy_trade = self.exchange.create_order(ticker,'market','buy',buy_volume)
+				print('\nBought')
+				break
+			except Exception as e:
+				print(e)
+				if i == 9:
+					print('Exiting')
+					exit()
+				print('\nBuy did not work, trying again')
 
-		return buy_trade
+		# Print buy
+		try:
+			if buy_trade.get('status') != 'open':
+				avg_price = sum([float(x['price']) * float(x['qty']) for x in buy_trade['info']['fills']])/sum([float(x['qty']) for x in buy_trade['info']['fills']])
+				print('\nBought %s of %s at %s with %s %s of fees on %s' % (buy_trade['amount']\
+					  , buy_trade['symbol'], avg_price, buy_trade['fee']['cost'], buy_trade['fee']['currency']\
+					  , datetime.now().strftime('%b %d - %H:%M:%S')))
+			else:
+				print('\nBought %.8f at %s' % (buy_volume, datetime.now().strftime('%b %d - %H:%M:%S')))
+		except Exception as e:
+			print(e)
+			print('\nError in print of buy')
+
+		return buy_trade, buy_volume
 
 	# Selling of real crypto
 	def sell_crypto(self, ticker, buy_volume, buy_trade):
@@ -187,13 +199,7 @@ class binance_api:
 
 		# Buy order
 		if not simulate:
-			for i in range(10):
-				try:
-					buy_trade = self.buy_crypto(ticker, buy_volume)
-					break
-				except Exception as e:
-					print(e)
-					print('\nBuy trade did not work, trying again')
+			buy_trade, buy_volume = self.buy_crypto(ticker, buy_volume)
 		else:
 			buy_trade = self.simulate_trade(True, buy_volume, ticker, tousd2)
 

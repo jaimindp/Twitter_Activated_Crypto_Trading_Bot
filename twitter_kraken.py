@@ -41,7 +41,7 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet
 												  )[0]
 					time.sleep(1)				
 				except Exception as e:
-					print(e,'\nTemporarilty failed at tweet collector\n')
+					print(e,'\nTemporarily failed at tweet collector\n')
 					print('\nWaiting for {} to tweet\n'.format(user[0]))
 
 		else:

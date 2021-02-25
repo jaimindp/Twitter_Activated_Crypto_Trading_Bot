@@ -149,6 +149,7 @@ class kraken_api:
 			except Exception as e:
 				print(e)
 			if not bought:
+				print('Exiting')
 				exit()
 		else:
 			buy_trade = self.simulate_trade(True, buy_volume, ticker, tousd2)
