@@ -5,10 +5,9 @@ from binance_futures_api import *
 
 # Query using tweepy self.api
 class Twitter_Query:
-	def __init__(self, api, exchange, logfile=None):
+	def __init__(self, api, exchange):
 		self.api = api
 		self.exchange = exchange
-		self.logfile = logfile
 
 	# query a user tweeting about a crypto
 	def query(self,user,pair,crypto,hold_time,volume,simulate,wait_tweet=True,print_timer=False):
@@ -30,7 +29,9 @@ class Twitter_Query:
 					last_tweet = new_tweet = first_tweet = tweets[0]
 
 				except Exception as e:
-					print('Couldnt get first tweet')
+					print(e)
+					print('\nCouldnt get first tweet')
+					print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
 					continue
 				print('\nWaiting for {} to tweet\n'.format(user[0]))
 				
@@ -54,6 +55,7 @@ class Twitter_Query:
 							                          )[0]
 					except Exception as e:
 						print(e,'\nTemporarily failed at tweet collector')
+						print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
 						print('\nWaiting for {} to tweet\n'.format(user[0]))
 			else:
 				new_tweet = {'full_text':'Fake tweet about dogecoin or something','created_at':datetime.now()}
