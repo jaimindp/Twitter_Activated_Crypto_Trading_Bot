@@ -1,61 +1,31 @@
 import tweepy
 import json
 import time
-from kraken_api import *
 from datetime import datetime
+from kraken_api import *
+from stream import *
+from query import *
 import ast
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, wait_tweet=True, logfile=None):
+def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False):
 	
 	exchange = kraken_api(api_keys, logfile=logfile)
 
-	while 1:
-		
-		# Bypass the need to check twitter for testing if tweet = False
-		if wait_tweet:
+	# Stream tweets
+	if stream:
+		while 1:
+			user_ids = [str(user[1])]
 			try:
-				tweets = api.user_timeline(user_id=user[1], 
-				                           count=1,
-				                           include_rts = True,
-				                           exclude_replies = True,
-				                           tweet_mode = 'extended',
-				                           wait_on_rate_limit=True,
-				                           wait_on_rate_limit_notify=True
-				                           )
+				stream_tweets(api, user_ids, set(user_ids), pair, hold_time, volume, simulate, exchange, keywords=crypto['triggers'])
 			except Exception as e:
-				print('couldnt get first tweet')
-				continue
-			last_tweet = new_tweet = tweets[0]
-			print('\nWaiting for {} to tweet\n'.format(user[0]))
-
-			while new_tweet.full_text == last_tweet.full_text:
-				try:
-					new_tweet = api.user_timeline(user_id=user[1],
-												  count=1,
-												  include_rts = True,
-												  exclude_replies = True,
-												  tweet_mode = 'extended',
-												  wait_on_rate_limit=True,
-												  wait_on_rate_limit_notify=True
-												  )[0]
-					time.sleep(1)				
-				except Exception as e:
-					print(e,'\nTemporarily failed at tweet collector\n')
-					print('\nWaiting for {} to tweet\n'.format(user[0]))
-
-		else:
-			new_tweet = {'full_text':'Fake tweet about dogecoin or something','created_at':datetime.now()}
-
-		
-		if not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers']):
-			trigger_time = datetime.now()
-			print('\nMoonshot inbound!  -  %s' % (trigger_time.strftime('%b %d - %H:%M:%S')))
-			exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
-			if wait_tweet:
-				print('\nClosed out on Tweet: "%s" created at : %s\n' %(new_tweet.full_text, new_tweet.created_at.strftime('%b %d - %H:%M:%S')))
-			else:
-				print('\nClosed out on tweet at %s\n' %(datetime.now().strftime('%b %d - %H:%M:%S')))
+				print(e)
+				print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
+	
+	# Query tweets
+	else:
+		twitter_q = Twitter_Query(api, exchange)	
+		twitter_q.query(user, pair, crypto, hold_time, volume, simulate, wait_tweet, print_timer)
 
 # Loads a json file
 def load_json(filepath):
@@ -142,6 +112,16 @@ if not skip_input:
 	simulate = True
 	if test == 'n': simulate = False
 
+# User to track, empty to skip tweet waiting
+stream = True
+if not skip_input:
+	print('\nStream or query s/q: ') 
+	stream_input = input()
+	if stream_input != 'q':
+		stream = True
+	else:
+		stream = False
+
 if simulate:
 	print('\nSIMULATION TRADING')
 
@@ -156,4 +136,4 @@ auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_tok
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, wait_tweet=not skip_input, logfile=logfile)
+tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile)

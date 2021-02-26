@@ -41,7 +41,7 @@ class Listener(StreamListener):
 				if self.log_file:
 					self.log_file.write(status)
 
-			print('\nRestarting stream\n')
+			print('\nRestarting stream')
 
 	def on_error(self, status_code):
 		print(status_code)

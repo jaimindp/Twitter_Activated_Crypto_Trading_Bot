@@ -49,6 +49,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade to 2s (done)
 	- Use 1 query/s maximum from Twitter keys
+	- Fix overloading queiries issue
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
 		- Integrate streaming
 	- Selenium scraper (slow)
