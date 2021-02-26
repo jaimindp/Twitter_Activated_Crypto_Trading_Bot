@@ -25,9 +25,14 @@ class Listener(StreamListener):
 	# Code to run on tweet
 	def on_status(self, status):
 		if str(status.user.id_str) in self.ids:
-			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), status.extended_tweet['full_text'], status.user.screen_name, status.user.id_str))
+			try:
+				full_text = status.extended_tweet['full_text']
+			except:
+				full_text = status.text
+				
+			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
 			print(status.created_at)
-			if any(word in status.extended_tweet['full_text'].lower() for word in self.keywords):
+			if any(word in full_text.lower() for word in self.keywords):
 				print('\n\nMoonshot Inbound!\n\n')
 				
 				# Execute trade
