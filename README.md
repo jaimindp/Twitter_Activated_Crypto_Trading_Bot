@@ -63,6 +63,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Keyword confidences = position size
 - Test for multiple other alt coins
 - Test when ticker symbols are reversed
+	- For a previously untraded coin
 - Work out the amount to buy for each alt
 	- Find a reasonable amount to trade based of previous exchange rates in £/$
 	- Keep a list of exchange rates in memory or in text file and update a a certain freq / at the start
