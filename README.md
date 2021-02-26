@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### Feb 21st 2021 - Set up for futures trading (not on github) which can use leverage up to 20x. Successfully returned 120% (DOGE/USDT Perpetual) from Elon's latest doge tweet. 
+### Feb 26th 2021 - Twitter query API overloaded on Elon's twitter timeline and behaving incorrectly. Switchng code to streaming tweets rather than querying tweets. Set up for futures trading (not on github) which can use leverage up to 20x. Successfully returned 120% (DOGE/USDT Perpetual) from Elon's latest doge tweet. 
 
 Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
