@@ -36,7 +36,7 @@ class Listener(StreamListener):
 				if self.log_file:
 					self.log_file.write(status)
 
-			print('\nRestarting stream\n')
+				print('\nRestarting stream\n')
 
 	def on_error(self, status_code):
 		print(status_code)
@@ -49,7 +49,7 @@ def stream_tweets(api, users, id_set, pair, hold_time, buy_volume, simulate, exc
 	stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	try:
-		print('\nStarting stream\n')
+		print('Starting stream')
 		stream.filter(follow=users, track=keywords)
 		# stream.filter(follow=users, track=keywords, is_async=True)
 
