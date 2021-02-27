@@ -6,8 +6,6 @@ import sys
 from datetime import datetime
 from tweepy import Stream
 from tweepy.streaming import StreamListener
-from binance_futures_api import *
-
 
 # Listener class
 class Listener(StreamListener):
