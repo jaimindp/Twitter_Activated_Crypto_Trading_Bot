@@ -51,7 +51,8 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Use 1 query/s maximum from Twitter keys
 	- Fix overloading queiries issue
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
-		- Integrate streaming
+		- Integrate streaming (done)
+		- Allow monitoring of multiple accounts through streaming
 	- Selenium scraper (slow)
 	- Requests package (doesn't work with Twitter)
 - Get a list of accounts to follow and trade ideas
