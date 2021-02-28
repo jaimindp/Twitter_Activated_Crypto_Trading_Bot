@@ -75,6 +75,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Limit order at a price target
 	- Trailing stop losses (Can use ccxt for this)
 	- Sell in chunks over user specified time (done)
+- Reduce fees using BNB coin and check working for all trades
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
