@@ -1,7 +1,6 @@
 import tweepy
 import time
 from datetime import datetime
-from binance_futures_api import * 
 
 # Query using tweepy self.api
 class Twitter_Query:
