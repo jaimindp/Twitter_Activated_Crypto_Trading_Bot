@@ -6,10 +6,12 @@ import sys
 from datetime import datetime
 from tweepy import Stream
 from tweepy.streaming import StreamListener
+from check_exchange import *
+import re
 
 # Listener class
 class Listener(StreamListener):
-	def __init__(self, users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=None):
+	def __init__(self, users, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=None):
 		super(Listener,self).__init__()
 		self.users = users
 		self.sell_coin = sell_coin
@@ -17,6 +19,7 @@ class Listener(StreamListener):
 		self.buy_volume = buy_volume
 		self.simulate = simulate
 		self.exchange = exchange
+		self.exchange_data = exchange_data
 		self.log_file = log_file
 
 	# Code to run on tweet
@@ -29,24 +32,34 @@ class Listener(StreamListener):
 			full_text = status.extended_tweet['full_text']
 
 		if status.entities['user_mentions']:
-			print('\n\n\n%s: with mentions %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
+			print('\n\n\n%s (with mentions): %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
 			print(status.created_at)
 			return
 
 		print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
 		print(status.created_at)
-		print(any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']))
-		print(status.in_reply_to_status_id is None)
-		print(status.retweeted is False)
 
 		if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
 			print('\n\nMoonshot Inbound!\n\n')
 			
 			# Get the trading pair and how much to buy
+			four = re.search('[A-Z]{4}', full_text)
+			if four:
+				pair = [four[0], self.sell_coin]
+			else:
+				three = re.search('[A-Z]{3}', full_text)
+				if three:
+					pair = [three[0], self.sell_coin]
+			if pair[0] == 'INCH':
+				pair[0] = '1INCH'
+
+			coin_vol = self.exchange_data.buy_vols[pair[0]]
+			
+			print(coin_vol)
 
 			# Execute trade
-			self.exchange.execute_trade(pair, hold_time=self.hold_time, buy_volume=self.buy_volume, simulate=self.simulate)
-			
+			self.exchange.execute_trade(pair, hold_time=self.hold_time, buy_volume=coin_vol, simulate=self.simulate)
+
 			if self.log_file:
 				self.log_file.write(status)
 
@@ -59,19 +72,24 @@ class Listener(StreamListener):
 # Stream tweets
 def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=None):
 	
-	listener = Listener(users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=log_file)
+	exchange_data = exchange_pull(exchange)
+	exchange_data.get_tickers()
+	exchange_data.buy_volumes(buy_volume)
+	
+	listener = Listener(users, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
 	stream = Stream(auth=api.auth, listener=listener,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
 
 	try:
 		print('\nStarting stream\n')
 		user_ids = [i['id'] for i in users.values()]
-		stream.filter(follow=user_ids, is_async = True)
+		stream.filter(follow=user_ids, is_async=True)
 		
 		# Work out amounts of trading pairs to get
 		while 1:
-			self.exchange.f
-			time.sleep(1*60)
-		# stream.filter(follow=users, track=keywords, is_async=True)
+			time.sleep(30*60) # Checks trading pairs every 30 seconds
+			exchange_data.get_tickers()
+			exchange_data.buy_volumes(buy_volume)
 
 	except KeyboardInterrupt as e:
 		stream.disconnect()
