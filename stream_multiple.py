@@ -64,7 +64,7 @@ class Listener(StreamListener):
 			print('\nError when handling tweet')
 			print(e)
 
-		print('\nRestarting stream')
+		print('\nRestarting stream\n')
 
 
 	def on_error(self, status_code):
@@ -90,7 +90,7 @@ def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchan
 
 		# Work out amounts of trading pairs to get
 		while 1:
-			time.sleep(1) # Checks trading pairs at intervals
+			time.sleep(20*60) # Checks trading pairs at intervals
 			exchange_data.get_tickers()
 			exchange_data.buy_volumes(buy_volume)
 

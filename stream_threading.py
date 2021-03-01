@@ -8,6 +8,7 @@ from tweepy import Stream
 from tweepy.streaming import StreamListener
 from check_exchange import *
 import re
+import threading
 
 # Listener class
 class Listener(StreamListener):
@@ -84,13 +85,24 @@ def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchan
 	stream = Stream(auth=api.auth, listener=listener,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	try:
-		print('\nStarting stream\n')
 		user_ids = [i['id'] for i in users.values()]
+
+
+		print('\nStarting stream\n')
+		t = threading.Thread(name='non-daemon', target=n)
+		d = threading.Thread(name='daemon', target=d)
+
+		d.setDaemon(True)
+
+		d.start()
+		t.start()
+
+
 		stream.filter(follow=user_ids, is_async=True)
 
 		# Work out amounts of trading pairs to get
 		while 1:
-			time.sleep(1) # Checks trading pairs at intervals
+			time.sleep(20*60) # Checks trading pairs at intervals
 			exchange_data.get_tickers()
 			exchange_data.buy_volumes(buy_volume)
 
