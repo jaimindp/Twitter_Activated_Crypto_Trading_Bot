@@ -63,9 +63,8 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Subtract time it takes to run code from intervals
 - Create keyword list in json file (done)
 	- Keyword confidences = position size
-- Test for multiple other alt coins
-- Test when ticker symbols are reversed
-	- For a previously untraded coin
+- Test for multiple other alt coins (done)
+	- For a previously untraded coin (done)
 - Work out the amount to buy for each alt
 	- Find a reasonable amount to trade based of previous exchange rates in £/$
 	- Keep a list of exchange rates in memory or in text file and update a a certain freq / at the start
@@ -77,6 +76,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Sell in chunks over user specified time (done)
 	- Step size consideration for hold times
 - Reduce fees using BNB coin and check working for all trades
+- Take out mention param for streaming and use user id instead
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
