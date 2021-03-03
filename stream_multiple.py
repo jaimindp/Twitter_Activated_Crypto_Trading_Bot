@@ -13,6 +13,8 @@ import re
 class Listener(StreamListener):
 	def __init__(self, users, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=None):
 		super(Listener,self).__init__()
+
+		# Define variables for the class when listener is created
 		self.users = users
 		self.sell_coin = sell_coin
 		self.hold_time = hold_time
@@ -21,6 +23,18 @@ class Listener(StreamListener):
 		self.exchange = exchange
 		self.exchange_data = exchange_data
 		self.log_file = log_file
+
+	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
+	def substring_match(self, text, num_letters):
+		match = re.search('[A-Z]'{num_letters}, text)
+		if not match:
+			return None
+
+		# Specific ticker of 1INCH symbol
+		if match[0] == 'INCH':
+			match[0] = '1INCH'
+
+		return [match[0], self.sell_coin]
 
 	# Code to run on tweet
 	def on_status(self, status):
@@ -32,7 +46,7 @@ class Listener(StreamListener):
 			else:
 				full_text = status.extended_tweet['full_text']
 
-			if status.entities['user_mentions']:
+			if status.entities['user_mentions']: # Take this out
 				return
 
 			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
@@ -41,22 +55,23 @@ class Listener(StreamListener):
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
 				print('\n\nMoonshot Inbound!\n\n')
 				
-				# Get the trading pair and how much to buy
-				four = re.search('[A-Z]{4}', full_text)
-				if four:
-					pair = [four[0], self.sell_coin]
-				else:
-					three = re.search('[A-Z]{3}', full_text)
-					if three:
-						pair = [three[0], self.sell_coin]
-				if pair[0] == 'INCH':
-					pair[0] = '1INCH'
+				# Loop from maximum coin name length to shortest coin name length 
+				for i in range(6,2,-1):
+					pair = self.substring_match(full_text, i)
+					if not pair:
+						continue
+					try:
+						# Get coin volume from cached trade volumes and execute trade
+						coin_vol = self.exchange_data.buy_vols[pair[0]]
+						self.exchange.execute_trade(pair, hold_time=self.hold_time, buy_volume=coin_vol, simulate=self.simulate)
 
-				coin_vol = self.exchange_data.buy_vols[pair[0]]
+						# If successful, break
+						break
+					except Exception as e:
+						print('\nTried executing trade with ticker %s, did not work' % pair[0])
+						print(e)
 
-				# Execute trade
-				self.exchange.execute_trade(pair, hold_time=self.hold_time, buy_volume=coin_vol, simulate=self.simulate)
-
+				# Log tweet
 				if self.log_file:
 					self.log_file.write(status)
 
@@ -66,12 +81,11 @@ class Listener(StreamListener):
 
 		print('\nRestarting stream\n')
 
-
+	# Streaming error handling
 	def on_error(self, status_code):
 		print('Error in streaming: %d' % status_code)
 		if status_code == 420:
 			time.sleep(10)
-		# return False
 
 # Stream tweets
 def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=None):
