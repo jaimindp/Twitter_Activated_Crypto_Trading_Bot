@@ -11,11 +11,12 @@ import re
 
 # Listener class
 class Listener(StreamListener):
-	def __init__(self, users, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=None):
+	def __init__(self, users, user_ids, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=None):
 		super(Listener,self).__init__()
 
 		# Define variables for the class when listener is created
 		self.users = users
+		self.user_ids = user_ids
 		self.sell_coin = sell_coin
 		self.hold_time = hold_time
 		self.buy_volume = buy_volume
@@ -26,7 +27,7 @@ class Listener(StreamListener):
 
 	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
 	def substring_match(self, text, num_letters):
-		match = re.search('[A-Z]'{num_letters}, text)
+		match = re.search('[A-Z]{%d}' %num_letters, text)
 		if not match:
 			return None
 
@@ -46,7 +47,7 @@ class Listener(StreamListener):
 			else:
 				full_text = status.extended_tweet['full_text']
 
-			if status.entities['user_mentions']: # Take this out
+			if status.user.id not in self.user_ids:
 				return
 
 			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
@@ -56,7 +57,7 @@ class Listener(StreamListener):
 				print('\n\nMoonshot Inbound!\n\n')
 				
 				# Loop from maximum coin name length to shortest coin name length 
-				for i in range(6,2,-1):
+				for i in range(6, 2, -1):
 					pair = self.substring_match(full_text, i)
 					if not pair:
 						continue
@@ -67,6 +68,7 @@ class Listener(StreamListener):
 
 						# If successful, break
 						break
+
 					except Exception as e:
 						print('\nTried executing trade with ticker %s, did not work' % pair[0])
 						print(e)
@@ -90,17 +92,21 @@ class Listener(StreamListener):
 # Stream tweets
 def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=None):
 	
+	# Get exchange tickers and calculate volumes to buy for each tradeable crypto
 	exchange_data = exchange_pull(exchange)
 	exchange_data.get_tickers()
 	exchange_data.buy_volumes(buy_volume)
 	
-	listener = Listener(users, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
+	# Set of ids of users tracked
+	user_ids = set([int(i['id']) for i in users.values()])
+
+	# Create the Tweepy streamer
+	listener = Listener(users, user_ids, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
 	stream = Stream(auth=api.auth, listener=listener,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	try:
 		print('\nStarting stream\n')
-		user_ids = [i['id'] for i in users.values()]
-		stream.filter(follow=user_ids, is_async=True)
+		stream.filter(follow=[str(i) for i in user_ids], is_async=True)
 
 		# Work out amounts of trading pairs to get
 		while 1:
