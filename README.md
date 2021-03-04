@@ -53,6 +53,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Coin(m) crypto pegged BTC or ETH
 - Subtract time it takes to run code from intervals
 - Keywords and confidences
+	- Handle multiple coins in the same tweet
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
 - Work out the amount to buy for each alt
