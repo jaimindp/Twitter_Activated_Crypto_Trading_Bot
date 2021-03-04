@@ -27,7 +27,7 @@ class Listener(StreamListener):
 
 	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
 	def substring_match(self, text, num_letters):
-		match = re.search('[A-Z]{%d}' %num_letters, text)
+		match = re.search('[A-Z]{%d}' % num_letters, text)
 		if not match:
 			return None
 
