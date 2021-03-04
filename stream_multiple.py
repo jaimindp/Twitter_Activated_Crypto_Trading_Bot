@@ -8,6 +8,7 @@ from tweepy import Stream
 from tweepy.streaming import StreamListener
 from check_exchange import *
 import re
+import threading
 
 # Listener class
 class Listener(StreamListener):
@@ -31,11 +32,12 @@ class Listener(StreamListener):
 		if not match:
 			return None
 
+		match = match[0]
 		# Specific ticker of 1INCH symbol
-		if match[0] == 'INCH':
-			match[0] = '1INCH'
+		if match == 'INCH':
+			match = '1INCH'
 
-		return [match[0], self.sell_coin]
+		return [match, self.sell_coin]
 
 	# Code to run on tweet
 	def on_status(self, status):
@@ -89,35 +91,44 @@ class Listener(StreamListener):
 		if status_code == 420:
 			time.sleep(10)
 
+
 # Stream tweets
 def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=None):
 	
+	# Set and list of ids of users tracked
+	user_ids_list = [i['id'] for i in users.values()]
+	user_ids_set = [int(i) for i in user_ids_list]
+
 	# Get exchange tickers and calculate volumes to buy for each tradeable crypto
 	exchange_data = exchange_pull(exchange)
-	exchange_data.get_tickers()
-	exchange_data.buy_volumes(buy_volume)
 	
-	# Set of ids of users tracked
-	user_ids = set([int(i['id']) for i in users.values()])
-
 	# Create the Tweepy streamer
-	listener = Listener(users, user_ids, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
+	listener = Listener(users, user_ids_set, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
 	stream = Stream(auth=api.auth, listener=listener,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+	# Start stream and query prices
+	print('\nStarting stream\n')
+	
+	# Try catch for different termination procedures
 	try:
-		print('\nStarting stream\n')
-		stream.filter(follow=[str(i) for i in user_ids], is_async=True)
+		# Create daemon thread which exits when other thread exits
+		d = threading.Thread(name='daemon', target = exchange_data.buy_volumes, args=(buy_volume,20*60))
+		d.setDaemon(True)
+		d.start()
 
-		# Work out amounts of trading pairs to get
-		while 1:
-			time.sleep(20*60) # Checks trading pairs at intervals
-			exchange_data.get_tickers()
-			exchange_data.buy_volumes(buy_volume)
-
+		# Start streaming tweets
+		stream.filter(follow=user_ids_list)
+		
+	# Keyboard interrupt kills the whole program
 	except KeyboardInterrupt as e:
 		stream.disconnect()
 		print("\nStopped stream")
 		exit()
+	
+	# Disconnect the stream and kill the thread looking for prices
 	finally:
 		print('\nDone\n')
+		exchange_data.stopflag = True
 		stream.disconnect()
+
+
