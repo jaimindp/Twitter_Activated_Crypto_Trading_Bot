@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### March 1st 2021 - Switched code to streaming tweets rather than querying tweets due to API errors. Set up for futures trading (not on github) which can use leverage up to 20x. Successfully returned 120% (DOGE/USDT Perpetual) from Elon's latest doge tweet. 
+### March 1st 2021 - Switched code to streaming tweets rather than querying tweets due to API errors. Set up for futures trading (not on github) which can use leverage up to 20x. Successfully returned 120%, 50% (DOGE/USDT Perpetual) from Elon's latest doge tweets. 
 
 Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
@@ -42,41 +42,28 @@ API keys are kept in a json, one directory up from repo ../keys.json
 ```
 
 ## To Do
-- User input parameters (done)
-- Error handling if trade is unclosed (done)
-- Fully implement Binance (lower taker/maker fees < 0.1% compared to Krakens 0.26%) (done)
-- Trade logging json mechanism (done)
-- Verify working using BTC transactions (done)
 - Reduce latency between tweet and trade to 2s (done)
 	- Use 1 query/s maximum from Twitter keys
-	- Fix overloading queiries issue
+	- Fix overloading queries issue
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
 		- Integrate streaming (done)
-		- Allow monitoring of multiple accounts through streaming
-	- Selenium scraper (slow)
-	- Requests package (doesn't work with Twitter)
-- Get a list of accounts to follow and trade ideas
-- Implement futures trading to leverage larger sums of money (Not on github)
+		- Allow monitoring of multiple accounts through streaming (done)
+- Implement futures trading to leverage larger sums of money (Not on github, message me)
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
 	- Coin(m) crypto pegged BTC or ETH
-- Handle Retweets vs. Tweets
 - Subtract time it takes to run code from intervals
-- Create keyword list in json file (done)
-	- Keyword confidences = position size
-- Test for multiple other alt coins (done)
-	- For a previously untraded coin (done)
-- Work out the amount to buy for each alt (done)
+- Keywords and confidences
+- Test for trading any alt coins (done)
+	- For a previously untraded coin (done binance)
+- Work out the amount to buy for each alt
 	- Find a reasonable amount to trade based of previous exchange rates in £/$ (done)
-	- Keep a list of exchange rates in memory or in text file and update a a certain freq / at the start (done)
-- Implement for any previously untraded alt coin if listed on Binance or Kraken
-	- Binance (done)
-	- Kraken
+	- Keep a list of exchange rates in memory with one thread as stream thread checks for tweets (done)
+	- Selling step size consideration
 - Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
 	- Trailing stop losses (Can use ccxt for this)
 	- Sell in chunks over user specified time (done)
-	- Step size consideration for hold times
 - Reduce fees using BNB coin and check working for all trades
 	- Spot (done)
 	- Futures
