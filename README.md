@@ -57,6 +57,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
 - Work out the amount to buy for each alt
+	- Fix pulling error in list threaded daemon
 	- Find a reasonable amount to trade based of previous exchange rates in £/$ (done)
 	- Keep a list of exchange rates in memory with one thread as stream thread checks for tweets (done)
 	- Selling step size consideration
