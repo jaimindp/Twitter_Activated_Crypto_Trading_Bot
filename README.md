@@ -8,9 +8,9 @@ The idea is to buy crypto using a Twitter trigger and sell after a user specifie
 
 Markets, particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency, crypto pumps. We can capitalize on this opportunity by being one of the first to exectue trades when a tweet is posted
 
-When a Tweet is posted, it checks for substring matches with keywords for a particular cryptocurrency
+When a Tweet is posted, it checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified
 
-These keywords and coins can be user specified
+The buy amount must be input in valid tradeable crypto units and this number must be divisible by the number of sell trades (valid in tradeable crypto units)
 
 To configure on local system: \
 `pip install -r requirements.txt`
