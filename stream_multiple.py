@@ -74,6 +74,7 @@ class Listener(StreamListener):
 					except Exception as e:
 						print('\nTried executing trade with ticker %s, did not work' % pair[0])
 						print(e)
+						
 
 				# Log tweet
 				if self.log_file:
