@@ -59,7 +59,7 @@ class Listener(StreamListener):
 				print('\n\nMoonshot Inbound!\n\n')
 				
 				# Loop from maximum coin name length to shortest coin name length 
-				for i in range(6, 2, -1):
+				for i in range(6, 1, -1):
 					pair = self.substring_match(full_text, i)
 					if not pair:
 						continue
@@ -74,7 +74,6 @@ class Listener(StreamListener):
 					except Exception as e:
 						print('\nTried executing trade with ticker %s, did not work' % pair[0])
 						print(e)
-						
 
 				# Log tweet
 				if self.log_file:
