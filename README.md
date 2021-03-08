@@ -1,6 +1,8 @@
 # Tweet Activated Crypto Trader
 
-### March 5th 2021 - Switched code to streaming tweets rather than querying tweets due to API errors. Set up for futures trading (not on github) which can use leverage up to 20x. Successfully returned 120%, 50%, 40% (DOGE/USDT Perpetual) from Elon's latest doge tweets. 
+### March 8th 2021 - Set up new trading strategy based on new coin listings from coinbase and binance if ticker exists on Binance 
+
+Set up for futures trading up to 100x leverage (not on github), successfully returned 100%+ from Elon's doge tweets
 
 Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
