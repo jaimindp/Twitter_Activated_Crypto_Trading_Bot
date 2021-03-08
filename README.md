@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### March 8th 2021 - Set up new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance 
+### March 8th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance 
 
 Set up for futures trading up to 100x leverage (not on github), successfully returned 100%+ from Elon's doge tweets
 
