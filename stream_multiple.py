@@ -27,7 +27,12 @@ class Listener(StreamListener):
 		self.log_file = log_file
 
 	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
-	def substring_match(self, text, num_letters):
+	def substring_match(self, text, num_letters, first=True):
+		if first:
+			match = re.search('(?<=\$)[^\ ]+', text)
+			if match:
+				return [match[0], self.sell_coin]
+
 		match = re.search('[A-Z]{%d}' % num_letters, text)
 		if not match:
 			return None
@@ -59,16 +64,16 @@ class Listener(StreamListener):
 				print('\n\nMoonshot Inbound!\n\n')
 				
 				# Loop from maximum coin name length to shortest coin name length 
+				firstflag = True
 				for i in range(6, 1, -1):
-					pair = self.substring_match(full_text, i)
+					pair = self.substring_match(full_text, i, firstflag)
+					firstflag = False
 					if not pair:
 						continue
 					try:
 						# Get coin volume from cached trade volumes and execute trade
 						coin_vol = self.exchange_data.buy_vols[pair[0]]
 						self.exchange.execute_trade(pair, hold_time=self.hold_time, buy_volume=coin_vol, simulate=self.simulate)
-
-						# If successful, break
 						break
 
 					except Exception as e:
