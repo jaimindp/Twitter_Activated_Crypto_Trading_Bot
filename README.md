@@ -1,16 +1,16 @@
 # Tweet Activated Crypto Trader
 
-### March 8th 2021 - Set up new trading strategy based on new coin listings from coinbase and binance if ticker exists on Binance 
+### March 8th 2021 - Set up new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance 
 
 Set up for futures trading up to 100x leverage (not on github), successfully returned 100%+ from Elon's doge tweets
 
 Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
-The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin
+The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin or when a new coin is listed on an exchange
 
 Markets, particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency, crypto pumps. We can capitalize on this opportunity by being one of the first to exectue trades when a tweet is posted
 
-When a Tweet is posted, it checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified
+As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified
 
 The buy amount must be input in valid tradeable crypto units and this number must be divisible by the number of sell trades (valid in tradeable crypto units)
 
@@ -19,6 +19,9 @@ To configure on local system: \
 
 To run with Binance: \
 `python twitter_binance.py`
+
+New coin listings (Trading on binance): \
+`python twitter_exchnages.py`
 
 To run with Kraken: \
 `python twitter_kraken.py`
