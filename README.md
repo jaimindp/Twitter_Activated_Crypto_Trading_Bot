@@ -21,7 +21,7 @@ To run with Binance: \
 `python twitter_binance.py`
 
 New coin listings (Trading on binance): \
-`python twitter_exchnages.py`
+`python twitter_exchanges.py`
 
 To run with Kraken: \
 `python twitter_kraken.py`
