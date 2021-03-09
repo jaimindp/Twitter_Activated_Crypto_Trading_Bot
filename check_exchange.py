@@ -1,14 +1,16 @@
 import time
+import traceback
 
 # Gathers prices from exchange to trade against coin
 class exchange_pull:
 
-	def __init__(self, exchange, hold_times, base_coin = 'BTC'):
+	def __init__(self, exchange, hold_times, base_coin='BTC',coin_subset=None):
 		self.exchange = exchange.exchange
 		self.base_coin = base_coin
 		self.stopflag = False
 		self.count_pulls = 0
 		self.hold_times = hold_times
+		self.coin_subset = coin_subset
 		self.buy_sell_vols = {}
 
 	# Retrieve tickers which have volume and trades against the base coin
@@ -16,8 +18,19 @@ class exchange_pull:
 		
 		# Fetch the tickers where there is volume for the trading pair agains the base coin
 		try:
-			self.all_tickers = self.exchange.fetch_tickers()
-			self.markets = self.exchange.fetch_markets()
+			# Using a subset of tickers from coin_subset
+			if self.coin_subset:
+				self.all_tickers, self.markets = {}, {}
+				for coin_pair in self.coin_subset:
+					coin_pair += '/'+self.base_coin
+					self.all_tickers[coin_pair] = self.exchange.fetch_ticker(coin_pair)
+					self.markets = list(filter(lambda x : x['id'] == coin_pair.replace('/',''), self.exchange.fetch_markets()))
+					# self.markets[coin_pair] = filter()
+			
+			# Using all tickers
+			else:
+				self.all_tickers = self.exchange.fetch_tickers()
+				self.markets = self.exchange.fetch_markets()
 
 			volume_tickers = {k: v for k, v in self.all_tickers.items() if v['askVolume'] != 0 and v['bidVolume'] != 0}
 			ticker_list = list(volume_tickers.keys())
@@ -26,15 +39,21 @@ class exchange_pull:
 			coin_tickers = ['/'.join(i) for i in list(filter(lambda x: self.base_coin == x[1], ticker_split))]
 			self.cryptos  = set([i.split('/')[0] for i in coin_tickers])
 
-			if self.count_pulls % 6 == 1:
-				print('\nPulling live prices, there are %d crypto tickers you can trade on exchange against %s' % (len(self.cryptos), self.base_coin))
+			if self.count_pulls % 10 == 0:
+				print('Pulling live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
 			
-			# Get the BTC/USDT rate as well (approx)
-			self.btc_usdt = self.all_tickers['BTC/USDT']['last']
+			# Get the COIN/USDT rate as well (approx)
+			if self.base_coin == 'USDT':
+				self.all_tickers['USDT/USDT'] = {}
+				self.all_tickers['USDT/USDT']['last'] = 1
+				self.all_tickers['USDT/USDT']['ask'] = 1
+			
+			self.coin_usdt = self.all_tickers[self.base_coin+'/USDT']['last']
 			self.count_pulls += 1
-		
+
 		except Exception as e:
 			print('\nError fetching tickers\n')
+			print(traceback.format_exc())
 			print(e)
 
 
@@ -42,19 +61,26 @@ class exchange_pull:
 	def buy_sell_volumes(self, buy_dollars, interval): # FIND OUT ABOUT LEVERAGED LIMITS AND SELL INCREMENTS
 
 		while 1:
+
+			# Set as cancellable thread on wakeup
 			if self.stopflag:
 				return
+
 			self.get_tickers()
 
 			# Calulate buy and sell amounts
-			btc_buy_amount = buy_dollars / self.btc_usdt
+			buy_amount = buy_dollars / self.coin_usdt
 			
 			# Loop over each crypto and calculate buy volume, then add to buy_sell_vols dict
 			for coin in self.cryptos:
 				symbol = coin + '/' + self.base_coin
-				this_buy_vol = btc_buy_amount / self.all_tickers[symbol]['ask']
+				if self.all_tickers[symbol]['ask'] == None:
+					this_buy_vol = buy_amount / float(self.all_tickers[symbol]['info']['lastPrice'])
+				else:
+					this_buy_vol = buy_amount / self.all_tickers[symbol]['ask']
+				
+				# Get market relevant for this coin
 				market = list(filter(lambda x : x['id'] == symbol.replace('/',''), self.markets))
-
 				if market:
 					step_size = float(market[0]['info']['filters'][2]['stepSize'])
 					buy_vol_rounded = round(this_buy_vol * 1/step_size) * step_size
