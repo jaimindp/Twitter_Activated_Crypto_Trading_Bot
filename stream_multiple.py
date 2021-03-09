@@ -33,6 +33,7 @@ class Listener(StreamListener):
 		
 		# First time check if $COIN is present with $ as the flag
 		if first:
+			text = text.replace('\n' , ' ')
 			match = re.search('(?<=\$)[^\ ]+', text)
 			if match:
 				return [match[0], self.sell_coin]
