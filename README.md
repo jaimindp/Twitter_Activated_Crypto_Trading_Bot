@@ -61,10 +61,9 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
 	- Coin(m) crypto pegged BTC or ETH
 - Subtract time it takes to run code from intervals
-- Keywords and confidences
-	- Handle multiple coins in the same tweet
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
+	- Handle multiple coins in the same tweet
 	- Dynamically adjust amounts to buy from prices with valid coin rounding (done)
 	- Update exchange rates with one thread as streaming, and one thread checking for tweets (done)
 	- Selling step size consideration so combined sales == buy (done)
@@ -74,10 +73,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Limit order at a price target
 	- Trailing stop losses (Can use ccxt for this)
 	- Sell in chunks over user specified time (done)
-- Reduce fees using BNB coin and check working for all trades
-	- Spot (done)
-	- Futures (wip)
-- Print % gain too (done)
+- Reduce fees using BNB coin and check working for all trades (done)
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
@@ -85,8 +81,8 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Interpreting images (CV for text extraction, object detection on memes)
 
 
-	## Notes
-	- Requires a Twitter Developer API detecting tweets through Tweepy
-	- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
-		- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult as long as ccxt has the same functions implemented)
+## Notes
+- Requires a Twitter Developer API detecting tweets through Tweepy
+- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
+	- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult as long as ccxt has the same functions implemented)
 
