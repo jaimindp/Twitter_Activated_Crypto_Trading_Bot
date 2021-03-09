@@ -1,5 +1,6 @@
 # Tweet Activated Crypto Trader
 
+## Updates
 ### March 9th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance. Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate.
 
 Do not use query method as Twitter API not consistently returning correct results (Feb 24th)
@@ -8,6 +9,7 @@ Set up for futures trading up to 100x leverage (not on github), successfully ret
 
 Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
+## Overview
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin or when a new coin is listed on an exchange
 
 Markets, particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency, crypto pumps. We can capitalize on this opportunity by being one of the first to exectue trades when a tweet is posted
@@ -48,7 +50,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 }
 ```
 
-## To Do
+## To Do List
 - Reduce latency between tweet and trade to 2s (done)
 	- Use 1 query/s maximum from Twitter keys
 	- Fix overloading queries issue
