@@ -114,7 +114,7 @@ class binance_api:
 		try:
 			trade_price = self.exchange.fetchTicker(ticker)[bid_ask]
 			price = (usdpair['bid']+usdpair['ask'])/2
-			print('\n{} {} at {:.8f} {} = {:.6f}$'.format(buy_sell, volume, trade_price, ticker, trade_price * volume * price))
+			print('\n{} {} at {:.8f} {} = ${:.6f}'.format(buy_sell, volume, trade_price, ticker, trade_price * volume * price))
 
 		except Exception as e:
 			print (e, '\nError in fetching ticker info')

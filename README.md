@@ -1,6 +1,8 @@
 # Tweet Activated Crypto Trader
 
-### March 9th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance. Do not use query method as Twitter API not consistently returning correct results.
+### March 9th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance. Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate.
+
+Do not use query method as Twitter API not consistently returning correct results (Feb 24th)
 
 Set up for futures trading up to 100x leverage (not on github), successfully returned 100%+ from Elon's doge tweets
 
@@ -61,7 +63,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Handle multiple coins in the same tweet
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
-	- Dynamically adjust amounts to buy from prices with valid coin rounding (done for new listings)
+	- Dynamically adjust amounts to buy from prices with valid coin rounding (done)
 	- Update exchange rates with one thread as streaming, and one thread checking for tweets (done)
 	- Selling step size consideration so combined sales == buy (done)
 	- Check leverage limits for coins

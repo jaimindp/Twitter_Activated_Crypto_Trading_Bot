@@ -3,7 +3,7 @@ import json
 import time
 from datetime import datetime
 from binance_api import *
-from stream import *
+from stream_multiple import *
 from query import *
 import ast
 
@@ -15,9 +15,9 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wa
 	# Stream tweets
 	if stream:
 		while 1:
-			user_ids = [str(user[1])]
+			users = {user[0]:{'id':str(user[1]),'keywords':crypto['triggers']}}
 			try:
-				stream_tweets(api, user_ids, set(user_ids), pair, hold_time, volume, simulate, exchange, keywords=crypto['triggers'])
+				stream_tweets(api, users, pair[1].upper(), hold_time, volume, simulate, exchange, keywords=crypto['triggers'], buy_coin=pair[0].upper())
 			except Exception as e:
 				print(e)
 				print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
@@ -89,11 +89,11 @@ if not skip_input:
 	hold_time = ast.literal_eval('['+hold_time+']')
 	print(hold_time)
 
-print('\nHodl time :'+'%.2fs '*len(hold_time) % tuple(hold_time))
+print('\nHodl time: '+'%.2fs '*len(hold_time) % tuple(hold_time))
 
 # Amount of crypto to buy (Fastest if fewest queries before buying)
 if not skip_input:
-	print('\nVolume in crypto: ')
+	print('\nAmount to buy in $: ')
 	volume = input()
 	if not volume:
 		if crypto == 'doge':
@@ -104,7 +104,7 @@ if not skip_input:
 		volume = float(volume)
 else:
 	volume = 50
-print('\nVolume %.8f %s' % (volume, buy_coin['symbol']))
+print('\nVolume $%.8f' % (volume))
 
 # Simulation trade or real trade
 simulate = True	
