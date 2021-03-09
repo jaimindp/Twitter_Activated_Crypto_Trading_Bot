@@ -12,11 +12,11 @@ Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT 
 ## Overview
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin or when a new coin is listed on an exchange
 
-Markets, particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency, crypto pumps. We can capitalize on this opportunity by being one of the first to exectue trades when a tweet is posted
+Markets, particularly small market cap altcoins are heavily influenced by individuals with large following 'hyping' up a cryptocurrency AKA crypto pumps. We can capitalise on this opportunity by being one of the first to exectue trades when a tweet is posted
 
-As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified
+As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified from the keywords json files to implement any trade strategies.
 
-The buy amount must be input in valid tradeable crypto units and this number must be divisible by the number of sell trades (valid in tradeable crypto units)
+The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). With Kraken the, buy amount has to be a valid tradeable amount and has to be divisible by the number of selling stages.
 
 To configure on local system: \
 `pip install -r requirements.txt`
