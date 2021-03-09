@@ -62,29 +62,30 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
 - Work out the amount to buy for each alt
-	- Fix pulling error in list threaded daemon (done)
-	- Fetch wallet balance to figure out the maximum to trade at current price
-	- Find a reasonable amount to trade based of previous exchange rates in £/$ (done)
-	- Keep a list of exchange rates in memory with one thread as stream thread checks for tweets (done)
-	- Selling step size consideration
-- Implement more sell options
-	- Specified % gain
-	- Limit order at a price target
-	- Trailing stop losses (Can use ccxt for this)
-	- Sell in chunks over user specified time (done)
-- Reduce fees using BNB coin and check working for all trades
-	- Spot (done)
-	- Futures
-- Take out mention param for streaming and use user id instead (done)
-- Machine Learning features
-	- Sentiment feature
-		- For size of position 
-		- Shorting
-	- Interpreting images (CV for text extraction, object detection on memes)
+	- Automatically round buy and sell volumes to correct buy_sell amounts instead of working out manually (done for new listings but not regular)
+		- Fix pulling error in list threaded daemon (done)
+		- Fetch wallet balance to dynamically adjust maximum to trade at current price
+		- Find a reasonable amount to trade based of previous exchange rates in £/$ (done)
+		- Keep a list of exchange rates in memory with one thread as stream thread checks for tweets (done)
+		- Selling step size consideration
+	- Implement more sell options
+		- Specified % gain
+		- Limit order at a price target
+		- Trailing stop losses (Can use ccxt for this)
+		- Sell in chunks over user specified time (done)
+	- Reduce fees using BNB coin and check working for all trades
+		- Spot (done)
+		- Futures
+	- Print % gain too
+	- Machine Learning features
+		- Sentiment feature
+			- For size of position 
+			- Shorting
+		- Interpreting images (CV for text extraction, object detection on memes)
 
 
-## Notes
-- Requires a Twitter Developer API detecting tweets through Tweepy
-- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
-	- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult)
+	## Notes
+	- Requires a Twitter Developer API detecting tweets through Tweepy
+	- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
+		- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult)
 

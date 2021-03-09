@@ -3,11 +3,13 @@ import time
 # Gathers prices from exchange to trade against coin
 class exchange_pull:
 
-	def __init__(self, exchange, base_coin = 'BTC'):
+	def __init__(self, exchange, hold_times, base_coin = 'BTC'):
 		self.exchange = exchange.exchange
 		self.base_coin = base_coin
 		self.stopflag = False
 		self.count_pulls = 0
+		self.hold_times = hold_times
+		self.buy_sell_vols = {}
 
 	# Retrieve tickers which have volume and trades against the base coin
 	def get_tickers(self):
@@ -37,26 +39,39 @@ class exchange_pull:
 
 
 	# Start a cancellable loop of updating prices (usually as a thread)
-	def buy_volumes(self, buy_dollars, interval): # FIND OUT ABOUT LEVERAGED LIMITS AND SELL INCREMENTS
+	def buy_sell_volumes(self, buy_dollars, interval): # FIND OUT ABOUT LEVERAGED LIMITS AND SELL INCREMENTS
 
 		while 1:
 			if self.stopflag:
 				return
-
 			self.get_tickers()
 
-			self.buy_vols = {}
-			btc_amount = buy_dollars / self.btc_usdt
+			# Calulate buy and sell amounts
+			btc_buy_amount = buy_dollars / self.btc_usdt
 			
-			# Loop over each crypto and calculate buy volume, then add to buy_vols dict
+			# Loop over each crypto and calculate buy volume, then add to buy_sell_vols dict
 			for coin in self.cryptos:
 				symbol = coin + '/' + self.base_coin
-				this_vol = btc_amount / self.all_tickers[symbol]['ask']
+				this_buy_vol = btc_buy_amount / self.all_tickers[symbol]['ask']
 				market = list(filter(lambda x : x['id'] == symbol.replace('/',''), self.markets))
+
 				if market:
 					step_size = float(market[0]['info']['filters'][2]['stepSize'])
-					buy_vol_rounded = round(this_vol * 1/step_size) * step_size
-					self.buy_vols[coin] = buy_vol_rounded
+					buy_vol_rounded = round(this_buy_vol * 1/step_size) * step_size
+					
+					# Calcluate sell amounts
+					sell_cumulative = 0
+					sell_vol = round((this_buy_vol/ len(self.hold_times)) * 1/step_size) * step_size
+					sell_vols_rounded = []
+
+					# Set all sell volumes to a correct size
+					for i in range(len(self.hold_times)-1):
+						sell_cumulative += sell_vol
+						sell_vols_rounded.append(sell_vol)
+
+					# Last sell volume is the excess to make it exactly equal to the buy volume
+					sell_vols_rounded.append(round((buy_vol_rounded - sell_cumulative) * 1/step_size) * step_size)
+					self.buy_sell_vols[coin] = [buy_vol_rounded, sell_vols_rounded]
 
 			time.sleep(interval)
 

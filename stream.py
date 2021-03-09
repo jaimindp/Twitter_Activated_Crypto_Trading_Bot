@@ -34,7 +34,7 @@ class Listener(StreamListener):
 				print('\n\nMoonshot Inbound!\n\n')
 				
 				# Execute trade
-				self.exchange.execute_trade(self.pair, hold_time=self.hold_time, buy_volume=self.buy_volume, simulate=self.simulate)
+				self.exchange.execute_trade(self.pair, hold_times=self.hold_time, buy_volume=self.buy_volume, simulate=self.simulate)
 				
 				if self.log_file:
 					self.log_file.write(status)

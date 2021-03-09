@@ -184,15 +184,27 @@ class binance_api:
 			else:
 				ticker_info = self.exchange.fetch_ticker(ticker.split('/')[1]+'/'+'USDT')
 
-		print('\nGain/Loss: $%.6f' % ((sum([i['cost'] for i in sell_prices]) - sum(i['cost'] for i in buy_prices)) * (ticker_info['bid'] + ticker_info['ask'])\
-			  / 2 - sell_fee_dollar - buy_fee_dollar))
+		sell_total = sum([i['cost'] for i in sell_prices])
+		buy_total = sum(i['cost'] for i in buy_prices)
+		avg_bid_ask = (ticker_info['bid'] + ticker_info['ask']) / 2
+
+		gain_loss = (sell_total - buy_total) * avg_bid_ask - sell_fee_dollar - buy_fee_dollar
+		gain_loss_percent = gain_loss / (buy_total * avg_bid_ask - sell_fee_dollar - buy_fee_dollar) * 100
+
+		print('\nGain/Loss: $%.6f , %.3f%%' % (gain_loss, gain_loss_percent))
 
 
 	# Execute trade
-	def execute_trade(self, pair, hold_time=60, buy_volume=50, simulate=False):
+	def execute_trade(self, pair, hold_times=60, buy_volume=50, simulate=False):
 
-		# Ticker and convesion to USD strings for Kraken
-		sell_volume = buy_volume
+		# Dealing with buy_sell volume pair or just a buy_volume
+		if type(buy_volume) != list:
+			sell_volumes = [buy_volume / len(hold_times) for _ in hold_times]
+		else:
+			sell_volumes = buy_volume[1]
+			buy_volume = buy_volume[0]
+
+		# Ticker and convesion 
 		ticker = pair[0]+'/'+pair[1]
 		tousd1 = pair[0]+'/USDT'
 		tousd2 = pair[1]+'/USDT'
@@ -203,17 +215,16 @@ class binance_api:
 		else:
 			buy_trade = self.simulate_trade(True, buy_volume, ticker, tousd2)
 
-		# Sell in multiple stages based on hold_time
-		buy_volume = sell_volume = buy_volume / len(hold_time)
+		# Sell in multiple stages based on hold_times
 		prev_sell_time = 0
 		sell_trades = []
-		for hold in hold_time:
+		for hold, sell_volume in zip(hold_times, sell_volumes):
 			time.sleep(hold - prev_sell_time)
 			prev_sell_time = hold
 
 			# Sell order
 			if not simulate:
-				sell_trades.append(self.sell_crypto(ticker, buy_volume, buy_trade))
+				sell_trades.append(self.sell_crypto(ticker, sell_volume, buy_trade))
 			else:
 				sell_trades.append(self.simulate_trade(False, sell_volume, ticker, tousd2))
 

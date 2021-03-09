@@ -63,7 +63,7 @@ class Twitter_Query:
 			if (not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers'])) and not first_tweet.full_text == new_tweet.full_text:
 				trigger_time = datetime.now()
 				print('\nMoonshot inbound!  -  %s' % (trigger_time.strftime('%b %d - %H:%M:%S')))
-				self.exchange.execute_trade(pair, hold_time=hold_time, buy_volume=volume, simulate=simulate)
+				self.exchange.execute_trade(pair, hold_times=hold_time, buy_volume=volume, simulate=simulate)
 				if wait_tweet:
 					print('\nClosed out on Tweet: "%s" created at %s\n' %(new_tweet.full_text, new_tweet.created_at.strftime('%b %d - %H:%M:%S')))
 				else:

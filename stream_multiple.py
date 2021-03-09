@@ -12,14 +12,14 @@ import threading
 
 # Listener class
 class Listener(StreamListener):
-	def __init__(self, users, user_ids, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=None):
+	def __init__(self, users, user_ids, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=None):
 		super(Listener,self).__init__()
 
 		# Define variables for the class when listener is created
 		self.users = users
 		self.user_ids = user_ids
 		self.sell_coin = sell_coin
-		self.hold_time = hold_time
+		self.hold_times = hold_times
 		self.buy_volume = buy_volume
 		self.simulate = simulate
 		self.exchange = exchange
@@ -28,11 +28,14 @@ class Listener(StreamListener):
 
 	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
 	def substring_match(self, text, num_letters, first=True):
+		
+		# First time check if $COIN is present with $ as the flag
 		if first:
 			match = re.search('(?<=\$)[^\ ]+', text)
 			if match:
 				return [match[0], self.sell_coin]
 
+		# Otherwise use the length of consecutive capital letters
 		match = re.search('[A-Z]{%d}' % num_letters, text)
 		if not match:
 			return None
@@ -49,6 +52,7 @@ class Listener(StreamListener):
 	
 		# Tweets with mentions
 		try:
+			# Handling extended vs not extended tweets
 			if not status.truncated:
 				full_text = status.text
 			else:
@@ -72,8 +76,8 @@ class Listener(StreamListener):
 						continue
 					try:
 						# Get coin volume from cached trade volumes and execute trade
-						coin_vol = self.exchange_data.buy_vols[pair[0]]
-						self.exchange.execute_trade(pair, hold_time=self.hold_time, buy_volume=coin_vol, simulate=self.simulate)
+						coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
+						self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
 						break
 
 					except Exception as e:
@@ -98,18 +102,18 @@ class Listener(StreamListener):
 
 
 # Stream tweets
-def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchange, log_file=None):
+def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, log_file=None):
 	
 	# Set and list of ids of users tracked
 	user_ids_list = [i['id'] for i in users.values()]
 	user_ids_set = [int(i) for i in user_ids_list]
 
 	# Get exchange tickers and calculate volumes to buy for each tradeable crypto
-	exchange_data = exchange_pull(exchange)
+	exchange_data = exchange_pull(exchange, hold_times)
 	
 	# Create the Tweepy streamer
-	listener = Listener(users, user_ids_set, sell_coin, hold_time, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
-	stream = Stream(auth=api.auth, listener=listener,wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
+	stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	# Start stream and query prices
 	print('\nStarting stream\n')
@@ -117,7 +121,7 @@ def stream_tweets(api, users, sell_coin, hold_time, buy_volume, simulate, exchan
 	# Try catch for different termination procedures
 	try:
 		# Create daemon thread which exits when other thread exits
-		d = threading.Thread(name='daemon', target = exchange_data.buy_volumes, args=(buy_volume,20*60))
+		d = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
 		d.setDaemon(True)
 		d.start()
 
