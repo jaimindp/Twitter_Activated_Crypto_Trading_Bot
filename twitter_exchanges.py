@@ -16,7 +16,7 @@ def tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait
 	# Stream tweets
 	if stream:
 		while 1:
-			user_ids = [i['id'] for i in users.values()]
+			# user_ids = [i['id'] for i in users.values()]
 			try:
 				stream_tweets(api, users, sell_coin, hold_time, volume, simulate, exchange)
 			except Exception as e:

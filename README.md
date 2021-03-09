@@ -68,20 +68,20 @@ API keys are kept in a json, one directory up from repo ../keys.json
 		- Find a reasonable amount to trade based of previous exchange rates in £/$ (done)
 		- Keep a list of exchange rates in memory with one thread as stream thread checks for tweets (done)
 		- Selling step size consideration
-	- Implement more sell options
-		- Specified % gain
-		- Limit order at a price target
-		- Trailing stop losses (Can use ccxt for this)
-		- Sell in chunks over user specified time (done)
-	- Reduce fees using BNB coin and check working for all trades
-		- Spot (done)
-		- Futures
-	- Print % gain too
-	- Machine Learning features
-		- Sentiment feature
-			- For size of position 
-			- Shorting
-		- Interpreting images (CV for text extraction, object detection on memes)
+- Implement more sell options
+	- Specified % gain
+	- Limit order at a price target
+	- Trailing stop losses (Can use ccxt for this)
+	- Sell in chunks over user specified time (done)
+- Reduce fees using BNB coin and check working for all trades
+	- Spot (done)
+	- Futures
+- Print % gain too (done)
+- Machine Learning features
+	- Sentiment feature
+		- For size of position 
+		- Shorting
+	- Interpreting images (CV for text extraction, object detection on memes)
 
 
 	## Notes

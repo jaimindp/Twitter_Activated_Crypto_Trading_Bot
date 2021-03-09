@@ -9,15 +9,17 @@ from tweepy.streaming import StreamListener
 from check_exchange import *
 import re
 import threading
+import traceback
 
 # Listener class
 class Listener(StreamListener):
-	def __init__(self, users, user_ids, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=None):
+	def __init__(self, users, user_ids, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, buy_coin=None, log_file=None):
 		super(Listener,self).__init__()
 
 		# Define variables for the class when listener is created
 		self.users = users
 		self.user_ids = user_ids
+		self.buy_coin = buy_coin
 		self.sell_coin = sell_coin
 		self.hold_times = hold_times
 		self.buy_volume = buy_volume
@@ -67,22 +69,33 @@ class Listener(StreamListener):
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
 				print('\n\nMoonshot Inbound!\n\n')
 				
-				# Loop from maximum coin name length to shortest coin name length 
-				firstflag = True
-				for i in range(6, 1, -1):
-					pair = self.substring_match(full_text, i, firstflag)
-					firstflag = False
-					if not pair:
-						continue
+				# Handling a single coin without checking substrings
+				if self.buy_coin:
 					try:
-						# Get coin volume from cached trade volumes and execute trade
-						coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
+						pair = [self.buy_coin, self.sell_coin]
+						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
 						self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
-						break
-
 					except Exception as e:
-						print('\nTried executing trade with ticker %s, did not work' % pair[0])
+						print('\nTried executing trade with ticker %s/%s, did not work' % (self.buy_coin,self.sell_coin))
 						print(e)
+				else:
+					# Loop from maximum coin name length to shortest coin name length 
+					firstflag = True
+					for i in range(6, 1, -1):
+						pair = self.substring_match(full_text, i, firstflag)
+						firstflag = False
+						if not pair:
+							continue
+						try:
+							# Get coin volume from cached trade volumes and execute trade
+							coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
+							self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
+							break
+
+						except Exception as e:
+							print('\nTried executing trade with ticker %s, did not work' % pair[0])
+							print(traceback.format_exc())
+							print(e)
 
 				# Log tweet
 				if self.log_file:
@@ -102,17 +115,21 @@ class Listener(StreamListener):
 
 
 # Stream tweets
-def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, log_file=None):
+def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None):
 	
 	# Set and list of ids of users tracked
 	user_ids_list = [i['id'] for i in users.values()]
 	user_ids_set = [int(i) for i in user_ids_list]
 
 	# Get exchange tickers and calculate volumes to buy for each tradeable crypto
-	exchange_data = exchange_pull(exchange, hold_times)
+	coin_subset = None
+	if buy_coin:
+		coin_subset = [buy_coin]
+
+	exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin, coin_subset=coin_subset)
 	
 	# Create the Tweepy streamer
-	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file)
+	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file, buy_coin=buy_coin)
 	stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	# Start stream and query prices
@@ -126,7 +143,10 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 		d.start()
 
 		# Start streaming tweets
-		stream.filter(follow=user_ids_list)
+		if keywords:
+			stream.filter(follow=user_ids_list,track=keywords)
+		else:
+			stream.filter(follow=user_ids_list)
 		
 	# Keyboard interrupt kills the whole program
 	except KeyboardInterrupt as e:
