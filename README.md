@@ -1,6 +1,6 @@
 # Tweet Activated Crypto Trader
 
-### March 8th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance 
+### March 9th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance. Do not use query method as Twitter API not consistently returning correct results.
 
 Set up for futures trading up to 100x leverage (not on github), successfully returned 100%+ from Elon's doge tweets
 
@@ -61,13 +61,10 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Handle multiple coins in the same tweet
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
-- Work out the amount to buy for each alt
-	- Automatically round buy and sell volumes to correct buy_sell amounts instead of working out manually (done for new listings but not regular)
-		- Fix pulling error in list threaded daemon (done)
-		- Fetch wallet balance to dynamically adjust maximum to trade at current price
-		- Find a reasonable amount to trade based of previous exchange rates in £/$ (done)
-		- Keep a list of exchange rates in memory with one thread as stream thread checks for tweets (done)
-		- Selling step size consideration
+	- Work out the amount to buy for each alt (done for new listings)
+	- Dynamically adjust amounts to buy from prices with valid coin rounding (done for new listings)
+		- Update exchange rates with one thread as streaming, and one thread checking for tweets (done)
+		- Selling step size consideration so combined sales == buy (done)
 - Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
@@ -75,7 +72,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Sell in chunks over user specified time (done)
 - Reduce fees using BNB coin and check working for all trades
 	- Spot (done)
-	- Futures
+	- Futures (wip)
 - Print % gain too (done)
 - Machine Learning features
 	- Sentiment feature
@@ -87,5 +84,5 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	## Notes
 	- Requires a Twitter Developer API detecting tweets through Tweepy
 	- Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
-		- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult)
+		- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult as long as ccxt has the same functions implemented)
 
