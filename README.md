@@ -61,10 +61,10 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Handle multiple coins in the same tweet
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
-	- Work out the amount to buy for each alt (done for new listings)
 	- Dynamically adjust amounts to buy from prices with valid coin rounding (done for new listings)
-		- Update exchange rates with one thread as streaming, and one thread checking for tweets (done)
-		- Selling step size consideration so combined sales == buy (done)
+	- Update exchange rates with one thread as streaming, and one thread checking for tweets (done)
+	- Selling step size consideration so combined sales == buy (done)
+	- Check leverage limits for coins
 - Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
