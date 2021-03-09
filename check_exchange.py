@@ -3,7 +3,7 @@ import time
 # Gathers prices from exchange to trade against coin
 class exchange_pull:
 
-	def __init__(self, exchange, hold_times, base_coin = 'BTC'):
+	def __init__(self, exchange, hold_times, base_coin='BTC'):
 		self.exchange = exchange.exchange
 		self.base_coin = base_coin
 		self.stopflag = False
