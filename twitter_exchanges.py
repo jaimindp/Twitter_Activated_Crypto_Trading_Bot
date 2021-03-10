@@ -46,7 +46,6 @@ cryptos = load_json('keywords.json')
 if 'prev_trades' in os.listdir():
 	full_ex = False
 	exchange_keywords = load_json('exchange_jaimin_keywords.json')
-	print("\nJP")
 else:
 	full_ex = True
 	exchange_keywords = load_json('exchange_keywords.json')
