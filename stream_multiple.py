@@ -13,7 +13,7 @@ import traceback
 
 # Listener class
 class Listener(StreamListener):
-	def __init__(self, users, user_ids, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, buy_coin=None, log_file=None):
+	def __init__(self, users, user_ids, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, buy_coin=None, log_file=None, full_ex=True):
 		super(Listener,self).__init__()
 
 		# Define variables for the class when listener is created
@@ -27,6 +27,7 @@ class Listener(StreamListener):
 		self.exchange = exchange
 		self.exchange_data = exchange_data
 		self.log_file = log_file
+		self.full_ex = full_ex
 
 	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
 	def substring_match(self, text, num_letters, first=True):
@@ -74,6 +75,7 @@ class Listener(StreamListener):
 				if self.buy_coin:
 					try:
 						pair = [self.buy_coin, self.sell_coin]
+						if self.full_ex: time.sleep(full_ex)
 						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
 						self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
 					except Exception as e:
@@ -116,7 +118,7 @@ class Listener(StreamListener):
 
 
 # Stream tweets
-def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None):
+def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None, full_ex=True):
 	
 	# Set and list of ids of users tracked
 	user_ids_list = [i['id'] for i in users.values()]
@@ -130,7 +132,7 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin, coin_subset=coin_subset)
 	
 	# Create the Tweepy streamer
-	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file, buy_coin=buy_coin)
+	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file, buy_coin=buy_coin, full_ex=full_ex)
 	stream = Stream(auth=api.auth, listener=listener, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 	# Start stream and query prices

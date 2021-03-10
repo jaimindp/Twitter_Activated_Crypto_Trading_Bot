@@ -2,6 +2,7 @@ import tweepy
 import json
 import time
 import ast
+import os
 from datetime import datetime
 import traceback
 from binance_api import *
@@ -9,7 +10,7 @@ from stream_multiple import *
 from query import *
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False):
+def tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True):
 
 	exchange = binance_api(api_keys, logfile=logfile)
 
@@ -18,7 +19,7 @@ def tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait
 		while 1:
 			# user_ids = [i['id'] for i in users.values()]
 			try:
-				stream_tweets(api, users, sell_coin, hold_time, volume, simulate, exchange)
+				stream_tweets(api, users, sell_coin, hold_time, volume, simulate, exchange, full_ex=full_ex)
 			except Exception as e:
 				print(e)
 				print(traceback.format_exc())
@@ -41,7 +42,14 @@ def load_json(filepath):
 api_keys = load_json('../keys.json')
 users = load_json('users.json')
 cryptos = load_json('keywords.json')
-exchange_keywords = load_json('exchange_keywords.json')
+
+if 'prev_trades' in os.listdir():
+	full_ex = False
+	exchange_keywords = load_json('exchange_jaimin_keywords.json')
+	print("\nJP")
+else:
+	full_ex = True
+	exchange_keywords = load_json('exchange_keywords.json')
 
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
@@ -63,7 +71,7 @@ else:
 
 # Users to track
 if not skip_input:
-	print('\nUsers: e.g. coinbase,CoinbasePro,binance from: '+'%s '* (len(users)+len(exchange_keywords)) % tuple(list(users.keys())+list(exchange_keywords.keys())))
+	print('\nUsers: e.g. coinbase,CoinbasePro,binance from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
 	usernames = input()
 	if not usernames:
 		users = ['ArbitrageDaddy']
@@ -132,6 +140,6 @@ auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_tok
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile)
+tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile, full_ex=full_ex)
 
 
