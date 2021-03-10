@@ -68,14 +68,17 @@ class Listener(StreamListener):
 			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
 			print(status.created_at)
 
+			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
+				if self.full_ex: time.sleep(full_ex)
 				print('\n\nMoonshot Inbound!\n\n')
 				
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
+
+					# Execute buy order
 					try:
 						pair = [self.buy_coin, self.sell_coin]
-						if self.full_ex: time.sleep(full_ex)
 						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
 						self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
 					except Exception as e:
