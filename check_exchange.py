@@ -98,6 +98,8 @@ class exchange_pull:
 					# Last sell volume is the excess to make it exactly equal to the buy volume
 					sell_vols_rounded.append(round((buy_vol_rounded - sell_cumulative) * 1/step_size) * step_size)
 					self.buy_sell_vols[coin] = [buy_vol_rounded, sell_vols_rounded]
-
+			
+			if len(self.cryptos) == 1:
+				print('Current buy volume in crypto: %.8f' % (self.buy_sell_vols[coin][0]))
 			time.sleep(interval)
 

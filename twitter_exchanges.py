@@ -70,11 +70,15 @@ else:
 
 # Users to track
 if not skip_input:
-	print('\nUsers: e.g. coinbase,CoinbasePro,binance from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
+	print('\nUsers: e.g. "coinbase,CoinbasePro,binance" or "all" from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
 	usernames = input()
 	if not usernames:
 		users = ['ArbitrageDaddy']
 		skip_input = True
+	elif usernames == 'all':
+		users = list(filter(lambda x : x not in ['ArbitrageDaddy', 'elonmusk'],[i for i in exchange_keywords.keys()]))
+		print(users)
+
 	else:
 		users = usernames.split(',')
 else:
