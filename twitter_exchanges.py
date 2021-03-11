@@ -22,7 +22,7 @@ def tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait
 				stream_tweets(api, users, sell_coin, hold_time, volume, simulate, exchange, full_ex=full_ex)
 			except Exception as e:
 				print(e)
-				print(traceback.format_exc())
+				# print(traceback.format_exc())
 				print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
 				time.sleep(10)
 	
