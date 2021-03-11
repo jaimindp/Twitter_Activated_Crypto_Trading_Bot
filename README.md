@@ -57,6 +57,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
 		- Integrate streaming (done)
 		- Allow monitoring of multiple accounts through streaming (done)
+		- Prevent multiple trades of the same coin within a time window
 - Implement futures trading to leverage larger sums of money (Not on github, message me)
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
 - Subtract time it takes to run code from intervals
