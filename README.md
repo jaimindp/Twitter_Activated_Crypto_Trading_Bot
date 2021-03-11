@@ -64,6 +64,8 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Test for trading any alt coins (done)
 	- For a previously untraded coin (done binance)
 	- Handle multiple coins in the same tweet
+		- Execute trade on coin with the lowest market cap
+		- Execute trade on all coins at the same time
 	- Dynamically adjust amounts to buy from prices with valid coin rounding (done)
 	- Update exchange rates with one thread pulling prices and one thread checking for tweets (done)
 	- Selling step size consideration so combined sales == buy (done)
