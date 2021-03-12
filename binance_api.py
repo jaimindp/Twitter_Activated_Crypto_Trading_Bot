@@ -191,7 +191,7 @@ class binance_api:
 		gain_loss = (sell_total - buy_total) * avg_bid_ask - sell_fee_dollar - buy_fee_dollar
 		gain_loss_percent = gain_loss / (buy_total * avg_bid_ask - sell_fee_dollar - buy_fee_dollar) * 100
 
-		print('\nGain/Loss: $%.6f , %.3f%%' % (gain_loss, gain_loss_percent))
+		print('\nGain/Loss: $%.6f   %.3f%%' % (gain_loss, gain_loss_percent))
 
 
 	# Execute trade

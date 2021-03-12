@@ -103,7 +103,7 @@ class exchange_pull:
 					self.buy_sell_vols[coin] = [buy_vol_rounded, sell_vols_rounded]
 			
 			if self.count_pulls % 10 == 0:
-				print('Pulling live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
+				print('Pulled live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
 				if len(self.cryptos) == 1:
 					print('Current buy volume in crypto: %.8f %s' % (self.buy_sell_vols[coin][0], self.coin_subset[0]))
 
