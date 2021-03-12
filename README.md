@@ -18,7 +18,7 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 
 As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified from the keywords json files to implement any trade strategies
 
-The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). With Kraken, the buy amount has to be a valid tradeable amount in crypto when divided by the number of selling trades, also has to leave valid tradeable amounts. 
+The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). With Kraken, the buy amount has to be a valid tradeable amount in crypto and when divided by the number of selling trades, also has to leave valid tradeable amounts. 
 
 To configure on local system: \
 `pip install -r requirements.txt`
@@ -26,11 +26,12 @@ To configure on local system: \
 To run with Binance (monitors a single ticker): \
 `python twitter_binance.py`
 
+To run with Kraken (monitors a single ticker): \
+`python twitter_kraken.py`
+
 New coin listings (Trades any pair listed on Binance): \
 `python twitter_exchanges.py`
 
-To run with Kraken (monitors a single ticker): \
-`python twitter_kraken.py`
 
 API keys are kept in a json, one directory up from repo ../keys.json
 ```
