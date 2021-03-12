@@ -18,7 +18,7 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 
 As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified from the keywords json files to implement any trade strategies
 
-The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). With Kraken the, buy amount has to be a valid tradeable amount and has to be divisible by the number of selling times
+The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). With Kraken, the buy amount has to be a valid tradeable amount in crypto when divided by the number of selling trades, also has to leave valid tradeable amounts. 
 
 To configure on local system: \
 `pip install -r requirements.txt`
