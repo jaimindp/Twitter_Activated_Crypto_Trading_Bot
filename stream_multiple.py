@@ -66,13 +66,13 @@ class Listener(StreamListener):
 				return
 
 			print('\n\n'+'-'*25 + ' New Tweet ' + '-' * 25)
-			print('%s\n\n%s \n\n%s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name))
-			print('Tweet created at: %s' %  status.created_at.strftime('%b %d  %H:%M:%S'))
+			print('%s\n\n%s \n\n@%s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name))
+			print('Created at: %s' %  status.created_at.strftime('%H:%M:%S - %b %d'))
 
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
 				if self.full_ex: time.sleep(full_ex)
-				print('\n\nMoonshot Inbound!\n\n')
+				print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 				
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
@@ -107,6 +107,8 @@ class Listener(StreamListener):
 				# Log tweet
 				if self.log_file:
 					self.log_file.write(status)
+			else:
+				print('Trade not triggered')
 
 		except Exception as e:
 			print('\nError when handling tweet')
@@ -118,7 +120,10 @@ class Listener(StreamListener):
 	def on_error(self, status_code):
 		print('Error in streaming: Code %d, sleeping for 10' % status_code)
 		if status_code == 420:
-			time.sleep(10)
+			print('Wait for cooloff period to try again\n\nExiting')
+			exit()
+		time.sleep(10)
+		print('\nRestarting stream\n')
 
 
 # Stream tweets
@@ -163,7 +168,7 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	
 	# Disconnect the stream and kill the thread looking for prices
 	finally:
-		print('\nDone\n')
+		print('\nDisconnected Stream\n')
 		exchange_data.stopflag = True
 		stream.disconnect()
 

@@ -25,7 +25,13 @@ class exchange_pull:
 					coin_pair += '/'+self.base_coin
 					self.all_tickers[coin_pair] = self.exchange.fetch_ticker(coin_pair)
 					self.markets = list(filter(lambda x : x['id'] == coin_pair.replace('/',''), self.exchange.fetch_markets()))
-					# self.markets[coin_pair] = filter()
+
+				# Add exchange rate with base coin and USDT
+				if self.base_coin != 'USDT':
+					try:
+						self.all_tickers[self.base_coin+'/USDT'] = self.exchange.fetch_ticker(self.base_coin+'/USDT')
+					except Exception as e:
+						print(e)
 			
 			# Using all tickers
 			else:
@@ -39,8 +45,6 @@ class exchange_pull:
 			coin_tickers = ['/'.join(i) for i in list(filter(lambda x: self.base_coin == x[1], ticker_split))]
 			self.cryptos  = set([i.split('/')[0] for i in coin_tickers])
 
-			if self.count_pulls % 10 == 0:
-				print('Pulling live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
 			
 			# Get the COIN/USDT rate as well (approx)
 			if self.base_coin == 'USDT':
@@ -49,11 +53,10 @@ class exchange_pull:
 				self.all_tickers['USDT/USDT']['ask'] = 1
 			
 			self.coin_usdt = self.all_tickers[self.base_coin+'/USDT']['last']
-			self.count_pulls += 1
 
 		except Exception as e:
-			print('\nError fetching tickers\n')
-			print(traceback.format_exc())
+			print('\nError fetching tickers, check buy and sell coins have pair on exchange\n')
+			# print(traceback.format_exc())
 			print(e)
 
 
@@ -99,7 +102,11 @@ class exchange_pull:
 					sell_vols_rounded.append(round((buy_vol_rounded - sell_cumulative) * 1/step_size) * step_size)
 					self.buy_sell_vols[coin] = [buy_vol_rounded, sell_vols_rounded]
 			
-			if len(self.cryptos) == 1:
-				print('Current buy volume in crypto: %.8f' % (self.buy_sell_vols[coin][0]))
+			if self.count_pulls % 10 == 0:
+				print('Pulling live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
+				if len(self.cryptos) == 1:
+					print('Current buy volume in crypto: %.8f %s' % (self.buy_sell_vols[coin][0], self.coin_subset[0]))
+
+			self.count_pulls += 1
 			time.sleep(interval)
 

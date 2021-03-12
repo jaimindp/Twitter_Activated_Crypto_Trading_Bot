@@ -8,7 +8,7 @@ from query import *
 import ast
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False):
+def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True):
 
 	exchange = binance_api(api_keys, logfile=logfile)
 
@@ -17,7 +17,7 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wa
 		while 1:
 			users = {user[0]:{'id':str(user[1]),'keywords':crypto['triggers']}}
 			try:
-				stream_tweets(api, users, pair[1].upper(), hold_time, volume, simulate, exchange, keywords=crypto['triggers'], buy_coin=pair[0].upper())
+				stream_tweets(api, users, pair[1].upper(), hold_time, volume, simulate, exchange, keywords=crypto['triggers'], buy_coin=pair[0].upper(), full_ex=full_ex)
 			except Exception as e:
 				print(e)
 				print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
@@ -38,6 +38,11 @@ def load_json(filepath):
 api_keys = load_json('../keys.json')
 users = load_json('users.json')
 cryptos = load_json('keywords.json')
+
+if 'prev_trades' in os.listdir():
+	full_ex = False
+else:
+	full_ex = True
 
 twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
@@ -138,4 +143,4 @@ auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_tok
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile)
+tweepy_pull(api, user, pair, buy_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile, full_ex=full_ex)
