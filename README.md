@@ -1,7 +1,9 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 9th 2021 - Set up and succesfully tested new trading strategy based on new coin listings from coinbase, coinbasepro and binance if ticker exists on Binance. Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate.
+### March 12th 2021 - New coin listings from coinbase, coinbasepro and binance successfully traded +25%. 
+
+Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
 
 Do not use query method as Twitter API not consistently returning correct results (Feb 24th)
 
@@ -75,6 +77,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- Limit order at a price target
 	- Trailing stop losses (Can use ccxt for this)
 	- Sell in chunks over user specified time (done)
+	- Allow different hold times for different users and keywords
 - Reduce fees using BNB coin and check working for all trades (done)
 - Trade notification system
 	- Slack API
