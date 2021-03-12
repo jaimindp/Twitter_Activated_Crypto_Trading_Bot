@@ -1,7 +1,7 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 12th 2021 - New coin listings from coinbase, coinbasepro and binance successfully traded +25%. 
+### March 12th 2021 - New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Fixed issue with trading single coin pair with btc in twitter_binance.py
 
 Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
 
