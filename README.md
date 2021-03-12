@@ -23,13 +23,13 @@ The buy amount is input in $ and based on the latest prices from the exchange, t
 To configure on local system: \
 `pip install -r requirements.txt`
 
-To run with Binance: \
+To run with Binance (monitors a single ticker): \
 `python twitter_binance.py`
 
-New coin listings (Trading on binance): \
+New coin listings (Trades any pair listed on Binance): \
 `python twitter_exchanges.py`
 
-To run with Kraken: \
+To run with Kraken (monitors a single ticker): \
 `python twitter_kraken.py`
 
 API keys are kept in a json, one directory up from repo ../keys.json
