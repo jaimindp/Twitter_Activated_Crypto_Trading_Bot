@@ -95,4 +95,4 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Requires a Twitter Developer API detecting tweets through Tweepy
 - Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
 	- ccxt allows universal function calls to be used on multiple exchanges (adding a new exchange should not be difficult as long as ccxt has the same functions implemented)
-
+- If anything is not working correctly, let me know!
