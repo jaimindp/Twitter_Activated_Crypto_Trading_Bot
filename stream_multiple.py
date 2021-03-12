@@ -65,8 +65,9 @@ class Listener(StreamListener):
 			if status.user.id not in self.user_ids:
 				return
 
-			print('\n\n\n%s: %s \n\n%s %s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name, status.user.id_str))
-			print(status.created_at)
+			print('\n\n'+'-'*25 + ' New Tweet ' + '-' * 25)
+			print('%s\n\n%s \n\n%s' % (datetime.now().strftime('%H:%M:%S'), full_text, status.user.screen_name))
+			print('Tweet created at: %s' %  status.created_at.strftime('%b %d  %H:%M:%S'))
 
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
@@ -115,7 +116,7 @@ class Listener(StreamListener):
 
 	# Streaming error handling
 	def on_error(self, status_code):
-		print('Error in streaming: %d' % status_code)
+		print('Error in streaming: Code %d, sleeping for 10' % status_code)
 		if status_code == 420:
 			time.sleep(10)
 
