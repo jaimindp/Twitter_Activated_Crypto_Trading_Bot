@@ -75,6 +75,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Implement more sell options
 	- Specified % gain
 	- Limit order at a price target
+	- Limit downside with a % drop cap to pull out of trade
 	- Trailing stop losses (Can use ccxt for this)
 	- Sell in chunks over user specified time (done)
 	- Allow different hold times for different users and keywords
