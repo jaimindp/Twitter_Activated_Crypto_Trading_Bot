@@ -1,7 +1,8 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 12th 2021 - New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Fixed issue with trading single coin pair with btc in twitter_binance.py
+### March 13th 2021 - New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees. Fixed issue with trading single coin pair with btc in twitter_binance.py
+
 
 Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
 
@@ -65,6 +66,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
 - Subtract time it takes to run code from intervals
 - Test for trading any alt coins (done)
+	- Allow for buying amounts with no BNB in account
 	- For a previously untraded coin (done binance)
 	- Handle multiple coins in the same tweet
 		- Execute trade on coin with the lowest market cap

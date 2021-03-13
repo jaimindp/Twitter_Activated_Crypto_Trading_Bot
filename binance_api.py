@@ -21,7 +21,7 @@ class binance_api:
 		for i in range(10):
 			try:
 				buy_trade = self.exchange.create_order(ticker,'market','buy',buy_volume)
-				print('\nBought')
+				# print('\nBought')
 				break
 			except Exception as e:
 				print(e)
@@ -34,11 +34,11 @@ class binance_api:
 		try:
 			if buy_trade.get('status') != 'open':
 				avg_price = sum([float(x['price']) * float(x['qty']) for x in buy_trade['info']['fills']])/sum([float(x['qty']) for x in buy_trade['info']['fills']])
-				print('\nBought %s of %s at %s with %s %s of fees on %s' % (buy_trade['amount']\
+				print('\nBought %s of %s at %s with %s %s of fees on %s\n' % (buy_trade['amount']\
 					  , buy_trade['symbol'], avg_price, buy_trade['fee']['cost'], buy_trade['fee']['currency']\
 					  , datetime.now().strftime('%b %d - %H:%M:%S')))
 			else:
-				print('\nBought %.8f at %s' % (buy_volume, datetime.now().strftime('%b %d - %H:%M:%S')))
+				print('\nBought %.8f at %s\n' % (buy_volume, datetime.now().strftime('%b %d - %H:%M:%S')))
 		except Exception as e:
 			print(e)
 			print('\nError in print of buy')
@@ -77,7 +77,7 @@ class binance_api:
 					sell_volume = buy_volume
 
 				sell_trade = self.exchange.create_order(ticker,'market','sell',sell_volume)
-				print('\nSold')
+				# print('\nSold')
 				break
 
 			except Exception as e:
