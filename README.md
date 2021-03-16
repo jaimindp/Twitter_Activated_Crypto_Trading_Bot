@@ -6,11 +6,7 @@
 
 Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
 
-Do not use query method as Twitter API not consistently returning correct results (Feb 24th)
-
 Set up for futures trading up to 100x leverage (not on github), successfully returned 100%+ from Elon's doge tweets
-
-Verified on DOGE/BTC (Kraken & Binance), DOGE/GBP, BTC/GBP (Binance), DOGE/USDT (Binance Futures), successfully made a 17%, 3%, 7% from DOGE/GBP spot trades
 
 ## Overview
 The idea is to buy crypto using a Twitter trigger and sell after a user specified time / price / % gain e.g. when Elon musk tweets about Dogecoin or when a new coin is listed on an exchange
@@ -57,7 +53,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 ## To Do List
 - Reduce latency between tweet and trade to 2s (done)
 	- Use 1 query/s maximum from Twitter keys
-	- Fix overloading queries issue
+	- Fix overloading queries issue (done)
 	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
 		- Integrate streaming (done)
 		- Allow monitoring of multiple accounts through streaming (done)
