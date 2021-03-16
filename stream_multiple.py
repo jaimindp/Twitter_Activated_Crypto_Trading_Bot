@@ -154,9 +154,9 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	# Try catch for different termination procedures
 	try:
 		# Create daemon thread which exits when other thread exits
-		d = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
-		d.setDaemon(True)
-		d.start()
+		daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
+		daemon.setDaemon(True)
+		daemon.start()
 
 		# Start streaming tweets
 		if keywords:

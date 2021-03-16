@@ -6,6 +6,7 @@ from binance_api import *
 from stream_multiple import *
 from query import *
 import ast
+import traceback
 
 # Checks if a tweet from a user contains a particular trigger word
 def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True):
@@ -24,8 +25,13 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wa
 	
 	# Query tweets
 	else:
-		twitter_q = Twitter_Query(api, exchange)	
-		twitter_q.query(user, pair, crypto, hold_time, volume, simulate, wait_tweet, print_timer)
+		try:
+			query_tweets(api, exchange, user, pair, crypto, hold_time, volume, simulate, wait_tweet, print_timer, full_ex=full_ex)
+		except Exception as e:
+			print(traceback.print_exc())
+			print(e)
+			print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
+
 
 # Loads a json file
 def load_json(filepath):

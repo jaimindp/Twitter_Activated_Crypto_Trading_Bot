@@ -3,6 +3,9 @@ import time
 from datetime import datetime, timedelta
 import pytz
 from tzlocal import get_localzone
+from check_exchange import *
+import threading
+import traceback
 
 # Query using tweepy self.api
 class Twitter_Query:
@@ -11,7 +14,7 @@ class Twitter_Query:
 		self.exchange = exchange
 
 	# query a user tweeting about a crypto
-	def query(self,user,pair,crypto,hold_time,volume,simulate,wait_tweet=True,print_timer=False):
+	def query(self,user,pair,crypto,hold_time,volume,simulate,wait_tweet=True,print_timer=False,full_ex=True):
 		tz = get_localzone() # My current timezone
 		error_count = 1
 
@@ -46,9 +49,10 @@ class Twitter_Query:
 					if print_timer:
 						print('\nTime between: %.6f' % (time.time() - last_time))
 						print('Sleep time: %.4f' % (1-(time.time()-last_time)))
-					sleep_time = 1-(time.time() - last_time)
-					time.sleep(max(0, sleep_time))
-					last_time = time.time()
+					if not full_ex:
+						sleep_time = 1-(time.time() - last_time)
+						time.sleep(max(0, sleep_time))
+						last_time = time.time()
 
 					try:
 						new_tweet = self.api.user_timeline(user_id = user[1],
@@ -59,6 +63,11 @@ class Twitter_Query:
 							                          wait_on_rate_limit=True,
 							                          wait_on_rate_limit_notify=True
 							                          )[0]
+						if full_ex:
+							sleep_time = 1-(time.time() - last_time)
+							time.sleep(max(0, sleep_time))
+							last_time = time.time()
+
 					except Exception as e:
 						if error_count % 50 == 0:
 							print(e,'\nTemporarily failed at tweet collector for the 5000th time')
@@ -77,3 +86,25 @@ class Twitter_Query:
 					print('\nClosed out on Tweet: "%s" created at %s\n' %(new_tweet.full_text, new_tweet.created_at.strftime('%b %d - %H:%M:%S')))
 				else:
 					print('\nClosed out on tweet at %s\n' %(datetime.now().strftime('%b %d - %H:%M:%S')))
+
+
+                   
+def query_tweets(api,exchange,user,pair,crypto,hold_times,buy_volume,simulate,wait_tweet=True,print_timer=False,full_ex=True):
+
+	coin_subset = [pair[0]]
+	exchange_data = exchange_pull(exchange, hold_times, base_coin=pair[1], coin_subset=coin_subset)
+
+	try:
+		daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
+		daemon.setDaemon(True)
+		daemon.start()
+
+		querys = Twitter_Query(api, exchange)
+		querys.query(user, pair, crypto, hold_times, buy_volume, simulate, wait_tweet, print_timer, full_ex=full_ex)
+
+	except KeyboardInterrupt as e:
+		print('\nKeyboard interrupt handling:\n\nExiting')
+		exit()
+
+
+
