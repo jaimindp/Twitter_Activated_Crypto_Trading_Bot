@@ -1,6 +1,8 @@
 import tweepy
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
+from tzlocal import get_localzone 
 
 # Query using tweepy self.api
 class Twitter_Query:
@@ -10,7 +12,12 @@ class Twitter_Query:
 
 	# query a user tweeting about a crypto
 	def query(self,user,pair,crypto,hold_time,volume,simulate,wait_tweet=True,print_timer=False):
+		tz = get_localzone() # My current timezone
+		error_count = 1
+
+
 		while 1:
+
 			if wait_tweet:
 				try:
 					last_time = time.time()
@@ -36,6 +43,8 @@ class Twitter_Query:
 				
 				# Loop and sleep for a second to check when the last tweet has changed (e.g. when user has tweeted)
 				while new_tweet.full_text == last_tweet.full_text:
+					local_time = tz.localize(datetime.now())
+					utc_time = local_time.astimezone(pytz.utc).replace(tzinfo=None)
 					if print_timer:
 						print('\nTime between: %.6f' % (time.time() - last_time))
 						print('Sleep time: %.4f' % (1-(time.time()-last_time)))
@@ -60,7 +69,7 @@ class Twitter_Query:
 				new_tweet = {'full_text':'Fake tweet about dogecoin or something','created_at':datetime.now()}
 
 			# Check for any keywords in full text
-			if (not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers'])) and not first_tweet.full_text == new_tweet.full_text:
+			if (not wait_tweet or any(i in new_tweet.full_text.lower() for i in crypto['triggers'])) and not first_tweet.full_text == new_tweet.full_text  and utc_time - new_tweet.created_at < timedelta(seconds=10):
 				trigger_time = datetime.now()
 				print('\nMoonshot inbound!  -  %s' % (trigger_time.strftime('%b %d - %H:%M:%S')))
 				self.exchange.execute_trade(pair, hold_times=hold_time, buy_volume=volume, simulate=simulate)

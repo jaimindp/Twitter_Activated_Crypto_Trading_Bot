@@ -1,7 +1,7 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 13th 2021 - New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees. Fixed issue with trading single coin pair with btc in twitter_binance.py
+### March 15th 2021 - Fixed issue with querying. New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees. Fixed issue with trading single coin pair with btc in twitter_binance.py
 
 
 Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
