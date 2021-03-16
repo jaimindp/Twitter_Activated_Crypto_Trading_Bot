@@ -2,7 +2,7 @@ import tweepy
 import time
 from datetime import datetime, timedelta
 import pytz
-from tzlocal import get_localzone 
+from tzlocal import get_localzone
 
 # Query using tweepy self.api
 class Twitter_Query:
@@ -15,9 +15,7 @@ class Twitter_Query:
 		tz = get_localzone() # My current timezone
 		error_count = 1
 
-
 		while 1:
-
 			if wait_tweet:
 				try:
 					last_time = time.time()
@@ -62,9 +60,11 @@ class Twitter_Query:
 							                          wait_on_rate_limit_notify=True
 							                          )[0]
 					except Exception as e:
-						print(e,'\nTemporarily failed at tweet collector')
-						print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
-						print('\nWaiting for {} to tweet\n'.format(user[0]))
+						if error_count % 50 == 0:
+							print(e,'\nTemporarily failed at tweet collector for the 5000th time')
+							print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
+							print('\nWaiting for {} to tweet\n'.format(user[0]))
+						error_count += 1
 			else:
 				new_tweet = {'full_text':'Fake tweet about dogecoin or something','created_at':datetime.now()}
 
