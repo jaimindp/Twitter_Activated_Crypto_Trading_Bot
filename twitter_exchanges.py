@@ -35,12 +35,17 @@ def load_json(filepath):
 	with open(filepath) as json_file:
 		return json.load(json_file)
 
+def read_twitter_keys(keys):
+	twitter_keys = {'consumer_key':keys['twitter_keys']['consumer_key'],'consumer_secret':keys['twitter_keys']['consumer_secret'],'access_token_key':keys['twitter_keys']['access_token_key'],'access_token_secret': keys['twitter_keys']['access_token_secret']}
+	return twitter_keys
+
 # Command line: python twitter_binance_futures.py l (save trade logs) p (print query intervals) 2 (2nd set of twitter keys)
 
 # Load keys, keywords and users 
 api_keys = load_json('../keys.json')
 users = load_json('users.json')
 cryptos = load_json('keywords.json')
+twitter_keys = read_twitter_keys(api_keys)
 
 if 'prev_trades' in os.listdir():
 	json_files = list(filter(lambda x : x.endswith('.json'),os.listdir()))
@@ -51,8 +56,6 @@ if 'prev_trades' in os.listdir():
 else:
 	full_ex = True
 	exchange_keywords = load_json('exchange_keywords.json')
-
-twitter_keys = {'consumer_key':api_keys['twitter_keys']['consumer_key'],'consumer_secret':api_keys['twitter_keys']['consumer_secret'],'access_token_key':api_keys['twitter_keys']['access_token_key'],'access_token_secret': api_keys['twitter_keys']['access_token_secret']}
 
 # Use second group of twitter api keys
 if '2' in sys.argv:
@@ -130,6 +133,17 @@ if not skip_input:
 		stream = True
 	else:
 		stream = False
+
+# Alternating use of twitter api keys
+if '2' in sys.argv:
+	api_keys_2 = load_json('../twitter_keys2.json')	
+	print('\nUsing twitter keys 2')
+	twitter_keys = read_twitter_keys(api_keys_3)
+elif '3' in sys.argv:
+	api_keys_3 = load_json('../twitter_keys3.json')
+	print('\nUsing twitter keys 3')
+	twitter_keys = read_twitter_keys(api_keys_3)
+
 
 if simulate:
 	print('\nSIMULATION TRADING\n')

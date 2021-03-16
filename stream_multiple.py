@@ -28,33 +28,65 @@ class Listener(StreamListener):
 		self.exchange_data = exchange_data
 		self.log_file = log_file
 		self.full_ex = full_ex
+		self.base_tickers = set(['BTC','USDT','USDC','DAI','USD','GBP','EUR'])
 
-	# Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
-	def substring_match(self, text, num_letters, first=True):
+	# # Returns a pair of Coin symbol and base coin e.g. ['DOGE', 'BTC']
+	# def substring_match(self, text, num_letters, first=True):
+		
+	# 	# First time check if $COIN is present with $ as the flag
+	# 	if first:
+
+	# 		# Special treatment for a special coin
+	# 		if 'DOGE' in text:
+	# 			return ['DOGE', self.sell_coin]
+
+	# 		text = text.replace('\n' , ' ')
+	# 		match = re.search('(?<=\$)[^\ ]+', text)
+	# 		if match:
+	# 			return [match[0], self.sell_coin]
+
+	# 	# Otherwise use the length of consecutive capital letters
+	# 	match = re.search('[A-Z]{%d}' % num_letters, text)
+	# 	if not match:
+	# 		return None
+
+	# 	match = match[0]
+	# 	# Specific ticker of 1INCH symbol
+	# 	if match == 'INCH':
+	# 		match = '1INCH'
+
+	# 	return [match, self.sell_coin]
+
+	# Returns a list of matches from CAPTIAL letter coin symbols of a user specified length 
+	def substring_matches(self, text, num_letters, sell_coin, first=False):
 		
 		# First time check if $COIN is present with $ as the flag
 		if first:
-
 			# Special treatment for a special coin
 			if 'DOGE' in text:
-				return ['DOGE', self.sell_coin]
+				return [['DOGE'], self.sell_coin]
 
+			# Look for $ sign
 			text = text.replace('\n' , ' ')
-			match = re.search('(?<=\$)[^\ ]+', text)
-			if match:
-				return [match[0], self.sell_coin]
+			matches = re.findall('(?<=\$)[^\ ]+', text)
+			if matches:
+				return [matches, self.sell_coin]
 
-		# Otherwise use the length of consecutive capital letters
-		match = re.search('[A-Z]{%d}' % num_letters, text)
-		if not match:
-			return None
+		# String manipuation and finding coins
+		text = text.replace('\n', ' ')
+		text = text.replace('/',  ' ')
+		matches = re.findall('[A-Z]{%d}' % num_letters, text)
+		
+		# Finding the intersection but maintaining order
+		ordered_matches = list(filter(lambda x : x not in self.base_tickers, matches))
+		matches = [value for value in ordered_matches if value in self.exchange_data.cryptos]
 
-		match = match[0]
 		# Specific ticker of 1INCH symbol
-		if match == 'INCH':
-			match = '1INCH'
+		for i in range(len(matches)):
+			if matches[i] == 'INCH':
+				matches[i] = '1INCH'
 
-		return [match, self.sell_coin]
+		return [matches, sell_coin]
 
 	# Code to run on tweet
 	def on_status(self, status):
@@ -76,7 +108,6 @@ class Listener(StreamListener):
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
 				if self.full_ex: time.sleep(full_ex)
-				print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
 
@@ -84,32 +115,38 @@ class Listener(StreamListener):
 					try:
 						pair = [self.buy_coin, self.sell_coin]
 						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
+						print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 						t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
 						t.start()
-						# self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
 					except Exception as e:
 						print('\nTried executing trade with ticker %s/%s, did not work' % (self.buy_coin,self.sell_coin))
 						print(e)
 				else:
-					# Loop from maximum coin name length to shortest coin name length 
-					firstflag = True
-					for i in range(6, 1, -1):
-						pair = self.substring_match(full_text, i, firstflag)
+					
+					# Loop over possible coin string lengths and get coins, firstflag is the first try to trade, successful is a flag if traded or not
+					firstflag, successful = True, False
+					for i in [3,4,5,2,6]:
+						pairs = self.substring_matches(full_text, i, self.sell_coin, firstflag)
 						firstflag = False
-						if not pair:
+						if not pairs[0]:
 							continue
-						try:
-							# Get coin volume from cached trade volumes and execute trade
-							coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
-							t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
-							t.start()
-							# self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
-							break
 
-						except Exception as e:
-							print('\nTried executing trade with ticker %s, did not work' % pair[0])
-							print(traceback.format_exc())
-							print(e)
+						# Loop over the possible buy coins and try to trade
+						for j in range(len(pairs[0])):
+							# Get coin volume from cached trade volumes and execute trade
+							try:
+								coin_vol = self.exchange_data.buy_sell_vols[pairs[0][j]]
+								print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
+								t = threading.Thread(target=self.exchange.execute_trade, args=([pairs[0][j], pairs[1]],), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+								t.start()
+								successful = True
+								break
+							except Exception as e:
+								print('\nTried executing trade with ticker %s, did not work' % pair[0])
+								print(traceback.format_exc())
+								print(e)
+						if successful:
+							break
 
 			else:
 				print('\nTrade not triggered')
