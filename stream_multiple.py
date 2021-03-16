@@ -77,7 +77,6 @@ class Listener(StreamListener):
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
 				if self.full_ex: time.sleep(full_ex)
 				print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
-				
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
 
@@ -85,7 +84,9 @@ class Listener(StreamListener):
 					try:
 						pair = [self.buy_coin, self.sell_coin]
 						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
-						self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
+						t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+						t.start()
+						# self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
 					except Exception as e:
 						print('\nTried executing trade with ticker %s/%s, did not work' % (self.buy_coin,self.sell_coin))
 						print(e)
@@ -100,7 +101,9 @@ class Listener(StreamListener):
 						try:
 							# Get coin volume from cached trade volumes and execute trade
 							coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
-							self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
+							t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+							t.start()
+							# self.exchange.execute_trade(pair, hold_times=self.hold_times, buy_volume=coin_vol, simulate=self.simulate)
 							break
 
 						except Exception as e:
@@ -108,9 +111,6 @@ class Listener(StreamListener):
 							print(traceback.format_exc())
 							print(e)
 
-				# Log tweet
-				if self.log_file:
-					self.log_file.write(status)
 			else:
 				print('\nTrade not triggered')
 
