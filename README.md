@@ -73,6 +73,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 		- Execute trade on all coins at the same time
 	- Dynamically adjust amounts to buy from prices with valid coin rounding (done)
 	- Dynamically addjust amounts to valid % of coin wallet
+	- Prevent $ amount becoming more than maximium of coin in wallet
 	- Update exchange rates with one thread pulling prices and one thread checking for tweets (done)
 	- Selling step size consideration so combined sales == buy (done)
 	- Check leverage limits for coins
