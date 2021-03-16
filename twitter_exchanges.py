@@ -43,8 +43,11 @@ users = load_json('users.json')
 cryptos = load_json('keywords.json')
 
 if 'prev_trades' in os.listdir():
+	json_files = list(filter(lambda x : x.endswith('.json'),os.listdir()))
+	print('\nChoose accounts to follow: '+'%s  ' * len(json_files) % tuple([file+' ('+str(i)+') ' for i, file in enumerate(json_files)]))
+	accounts = input()
 	full_ex = False
-	exchange_keywords = load_json('exchange_jaimin_keywords.json')
+	exchange_keywords = load_json(json_files[int(accounts)])
 else:
 	full_ex = True
 	exchange_keywords = load_json('exchange_keywords.json')
