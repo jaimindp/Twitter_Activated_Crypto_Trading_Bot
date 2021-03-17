@@ -16,7 +16,7 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 
 As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified from the keywords json files to implement any trade strategies
 
-Threading for streaming tweets so trade executions run in a separate thread allowing multiple trades to occur at once. When ctrl-c is hit, it waits for the trades to sell automatically according to the specification then closes the program.
+Threading for streaming tweets so trade executions run in a separate thread allowing multiple trades to occur at once. When ctrl-c is hit, it waits for the trades to sell automatically according to the specification then closes the program
 
 The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). BNB coin required in account to take fees. With Kraken, the buy amount has to be a valid tradeable amount in crypto and when divided by the number of selling trades, also has to leave valid tradeable amounts 
 
@@ -55,38 +55,34 @@ API keys are kept in a json, one directory up from repo ../keys.json
 
 ## To Do List
 - Reduce latency between tweet and trade to 2s (done)
-	- Use 1 query/s maximum from Twitter keys
-	- Fix overloading queries issue (done)
-	- Look at streaming Twitter, streams can get multiple users rather than just 1 every second (slower ~ 5s)
-		- Integrate streaming (done)
-		- Allow monitoring of multiple accounts through streaming (done)
-		- Prevent multiple trades of the same coin within a time window
+	- Prevent multiple trades of the same coin within a time window
 - Implement futures trading to leverage larger sums of money (Not on github, message me)
 	- USD(S)(Stablecoin pegged) currently USDT (Done)
-- Subtract time it takes to run code from intervals
 - Test for trading any alt coins (done)
 	- Allow for buying amounts with no BNB in account
 	- For a previously untraded coin (done binance)
 	- Handle multiple coins in the same tweet
 		- Execute trade on coin with the lowest market cap
 		- Execute trade on all coins at the same time
+		- Execute trades in a loop (done)
 	- Dynamically adjust amounts to buy from prices with valid coin rounding (done)
 	- Dynamically addjust amounts to valid % of coin wallet
 	- Prevent $ amount becoming more than maximium of coin in wallet
 	- Update exchange rates with one thread pulling prices and one thread checking for tweets (done)
-	- Selling step size consideration so combined sales == buy (done)
 	- Check leverage limits for coins
 - Implement more sell options
 	- Specified % gain
+	- Cut losses at % drop
 	- Limit order at a price target
 	- Limit downside with a % drop cap to pull out of trade
 	- Trailing stop losses (Can use ccxt for this)
 	- Sell in chunks over user specified time (done)
 	- Allow different hold times for different users and keywords
 - Reduce fees using BNB coin and check working for all trades (done)
-- Trade notification system
+- Trade notification system for user
 	- Slack API
 	- Telegram API
+- Improve trade logging system
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
