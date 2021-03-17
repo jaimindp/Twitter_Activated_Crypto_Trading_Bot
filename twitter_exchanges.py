@@ -133,7 +133,7 @@ if not skip_input:
 if '2' in sys.argv:
 	api_keys_2 = load_json('../twitter_keys2.json')	
 	print('\nUsing twitter keys 2')
-	twitter_keys = read_twitter_keys(api_keys_3)
+	twitter_keys = read_twitter_keys(api_keys_2)
 elif '3' in sys.argv:
 	api_keys_3 = load_json('../twitter_keys3.json')
 	print('\nUsing twitter keys 3')
