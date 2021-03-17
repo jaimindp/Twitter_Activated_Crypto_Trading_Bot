@@ -100,7 +100,7 @@ class Listener(StreamListener):
 					# Loop over possible coin string lengths and get coins, firstflag is the first try to trade, successful is a flag if traded or not
 					firstflag, successful = True, False
 					for i in [3,4,5,2,6]:
-						pairs = self.substring_matches(full_text, i, self.sell_coin, firstflag)
+						pairs = self.substring_matches(full_text, i, firstflag)
 						firstflag = False
 						if not pairs[0]:
 							continue
