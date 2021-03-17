@@ -1,8 +1,7 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 15th 2021 - Fixed issue with querying. New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees. Fixed issue with trading single coin pair with btc in twitter_binance.py
-
+### March 17th 2021 - New thread created for trade so multiple trades can occur concurrently under streaming. Ctrl-c will allow the trades to close out in the given time and the program to exit automatically. Fixed issue with querying. New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees.
 
 Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
 
@@ -15,7 +14,9 @@ Markets, particularly small market cap altcoins are heavily influenced by indivi
 
 As soon as Tweet is posted, ~5s with streaming/~1s querying, the program checks for substring matches with keywords for a particular cryptocurrency. These keywords and coins can be user specified from the keywords json files to implement any trade strategies
 
-The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). With Kraken, the buy amount has to be a valid tradeable amount in crypto and when divided by the number of selling trades, also has to leave valid tradeable amounts. 
+Threading for streaming tweets so trade executions run in a separate thread allowing multiple trades to occur at once. When ctrl-c is hit, it waits for the trades to sell automatically according to the specification then closes the program.
+
+The buy amount is input in $ and based on the latest prices from the exchange, the program  will calculate valid buy and (multiple) sell amounts as close to the specified $ amount as the market will allow (Binance). BNB coin required in account to take fees. With Kraken, the buy amount has to be a valid tradeable amount in crypto and when divided by the number of selling trades, also has to leave valid tradeable amounts 
 
 To configure on local system: \
 `pip install -r requirements.txt`
