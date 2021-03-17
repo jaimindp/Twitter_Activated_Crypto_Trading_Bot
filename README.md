@@ -1,7 +1,9 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 17th 2021 - New thread created for trade so multiple trades can occur concurrently under streaming. Ctrl-c will allow the trades to close out in the given time and the program to exit automatically. Fixed issue with querying. New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees.
+### March 17th 2021 - New thread created for trade so multiple trades can occur concurrently under streaming. Ctrl-c will allow the trades to close out in the given time and the program to exit automatically.
+
+Fixed issue with querying. New coin listings from coinbase, coinbasepro and binance successfully traded +25%. Works when BNB is in binance account to take fees. (March 15th)
 
 Buy amount now requested in $ and dynamically adjusted to valid crypto amount based on latest exchange rate. (Mar 9th)
 
