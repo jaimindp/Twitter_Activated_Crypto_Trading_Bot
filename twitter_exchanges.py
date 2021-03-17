@@ -57,11 +57,6 @@ else:
 	full_ex = True
 	exchange_keywords = load_json('exchange_keywords.json')
 
-# Use second group of twitter api keys
-if '2' in sys.argv:
-	api_keys2 = load_json('../twitter_keys2.json')
-	twitter_keys = {'consumer_key':api_keys2['twitter_keys']['consumer_key'],'consumer_secret':api_keys2['twitter_keys']['consumer_secret'],'access_token_key':api_keys2['twitter_keys']['access_token_key'],'access_token_secret': api_keys2['twitter_keys']['access_token_secret']}
-
 # Get user inputs
 # Sell currency
 print('\nEnter currency to sell: btc, usdt')
