@@ -106,6 +106,7 @@ class Listener(StreamListener):
 							continue
 
 						# Loop over the possible buy coins and try to trade
+						# Currently will only execute 1 trade which is the first in the trade
 						for j in range(len(pairs[0])):
 							# Get coin volume from cached trade volumes and execute trade
 							try:
@@ -122,6 +123,9 @@ class Listener(StreamListener):
 								print(e)
 						if successful:
 							break
+
+					if not successful:
+						print('\nNo valid tickers to trade in tweet')
 
 			else:
 				print('\nTrade not triggered')

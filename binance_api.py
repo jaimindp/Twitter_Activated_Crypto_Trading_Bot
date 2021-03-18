@@ -164,7 +164,6 @@ class binance_api:
 						sell_crypto_dollar = self.exchange.fetch_ticker(sell_prices[0]['fee']['currency']+'/USDT')
 						buy_fee_price = (buy_crypto_dollar['bid']+buy_crypto_dollar['ask'])/2
 						sell_fee_price = (sell_crypto_dollar['bid']+sell_crypto_dollar['ask'])/2
-						
 						buy_fee_dollar = buy_fee_price * buy_fee
 						sell_fee_dollar = sell_fee_price * sell_fee
 
@@ -184,14 +183,28 @@ class binance_api:
 			else:
 				ticker_info = self.exchange.fetch_ticker(ticker.split('/')[1]+'/'+'USDT')
 
-		sell_total = sum([i['cost'] for i in sell_prices])
 		buy_total = sum(i['cost'] for i in buy_prices)
+		sell_total = sum([i['cost'] for i in sell_prices])
 		avg_bid_ask = (ticker_info['bid'] + ticker_info['ask']) / 2
 
 		gain_loss = (sell_total - buy_total) * avg_bid_ask - sell_fee_dollar - buy_fee_dollar
 		gain_loss_percent = gain_loss / (buy_total * avg_bid_ask - sell_fee_dollar - buy_fee_dollar) * 100
 
-		print('\nGain/Loss: $%.6f   %.3f%%' % (gain_loss, gain_loss_percent))
+		gain_text = '\nGain/Loss: $%.6f   %.3f%%' % (gain_loss, gain_loss_percent)
+		print(gain_text)
+
+		# Sending a telegram message to myself
+		if 'telegram_keys.json' in os.listdir('../') and not simulate:
+			if abs(gain_loss) > 0.5:
+				import telegram
+				with open('../telegram_keys.json') as json_file:
+					telegram_dict = json.load(json_file)
+				
+				full_info_text = '(%s) Bought %.6f and sold %.6f\n' % (buy_total, sell_total, ticker)
+				full_info_text += gain_text
+				
+				bot = telegram.Bot(token=telegram_dict['api_key'])
+				bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
 
 
 	# Execute trade
