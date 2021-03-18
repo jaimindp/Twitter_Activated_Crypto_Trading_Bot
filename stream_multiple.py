@@ -159,6 +159,7 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 		coin_subset = [buy_coin]
 
 	exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin, coin_subset=coin_subset)
+	time.sleep(3)
 	
 	# Create the Tweepy streamer
 	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file, buy_coin=buy_coin, full_ex=full_ex)
