@@ -195,16 +195,16 @@ class binance_api:
 
 		# Sending a telegram message to myself
 		if 'telegram_keys.json' in os.listdir('../') and not simulate:
-			if abs(gain_loss) > 0.5:
-				import telegram
-				with open('../telegram_keys.json') as json_file:
-					telegram_dict = json.load(json_file)
-				
-				full_info_text = '(%s) Bought %.6f and sold %.6f\n' % (buy_total, sell_total, ticker)
-				full_info_text += gain_text
-				
-				bot = telegram.Bot(token=telegram_dict['api_key'])
-				bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
+			# if abs(gain_loss) > 0.5:
+			import telegram
+			with open('../telegram_keys.json') as json_file:
+				telegram_dict = json.load(json_file)
+			
+			full_info_text = '(%s) Bought %.6f and sold %.6f BTC\n' % (buy_total, sell_total, ticker)
+			full_info_text += gain_text
+			
+			bot = telegram.Bot(token=telegram_dict['api_key'])
+			bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
 
 
 	# Execute trade
