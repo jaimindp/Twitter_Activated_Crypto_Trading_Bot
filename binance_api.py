@@ -200,7 +200,7 @@ class binance_api:
 			with open('../telegram_keys.json') as json_file:
 				telegram_dict = json.load(json_file)
 			
-			full_info_text = '(%s) Bought %.6f and sold %.6f BTC\n' % (ticker, buy_total, sell_total)
+			full_info_text = '(%s) Bought %.6f and sold %.6f BTC\n' % (ticker, float(buy_total), float(sell_total))
 			full_info_text += gain_text
 			
 			bot = telegram.Bot(token=telegram_dict['api_key'])
