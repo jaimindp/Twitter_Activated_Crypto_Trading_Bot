@@ -16,7 +16,10 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wa
 	# Stream tweets
 	if stream:
 		while 1:
+			# Users specified with keywords
 			users = {user[0]:{'id':str(user[1]),'keywords':crypto['triggers']}}
+
+			# From steam_multiple.py file
 			try:
 				stream_tweets(api, users, pair[1].upper(), hold_time, volume, simulate, exchange, keywords=crypto['triggers'], buy_coin=pair[0].upper(), full_ex=full_ex)
 			except Exception as e:
@@ -25,6 +28,7 @@ def tweepy_pull(api, user, pair, crypto, hold_time, volume, simulate, stream, wa
 	
 	# Query tweets
 	else:
+		# From query.py file
 		try:
 			query_tweets(api, exchange, user, pair, crypto, hold_time, volume, simulate, wait_tweet, print_timer, full_ex=full_ex)
 		except Exception as e:

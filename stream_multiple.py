@@ -46,9 +46,10 @@ class Listener(StreamListener):
 			if matches:
 				return [matches, self.sell_coin]
 
-		# String manipuation and finding coins
+		# String manipulation and finding coins
 		text = text.replace('\n', ' ')
 		text = text.replace('/',  ' ')
+
 		matches = re.findall('[A-Z]{%d}' % num_letters, text)
 		
 		# Finding the intersection but maintaining order

@@ -21,7 +21,6 @@ class binance_api:
 		for i in range(10):
 			try:
 				buy_trade = self.exchange.create_order(ticker,'market','buy',buy_volume)
-				# print('\nBought')
 				break
 			except Exception as e:
 				print(e)
@@ -77,7 +76,6 @@ class binance_api:
 					sell_volume = buy_volume
 
 				sell_trade = self.exchange.create_order(ticker,'market','sell',sell_volume)
-				# print('\nSold')
 				break
 
 			except Exception as e:
