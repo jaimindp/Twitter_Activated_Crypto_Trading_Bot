@@ -9,10 +9,16 @@ import sys
 class binance_api:
 
 	# Initialize
-	def __init__(self, api_keys, logfile=False):
+	def __init__(self, api_keys, logfile=False, block=False):
 		self.api_keys = {'api_key':api_keys['binance_keys']['api_key'],'secret_key':api_keys['binance_keys']['secret_key']}
 		self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 		self.logfile = logfile
+		self.block = block
+
+		# Set of tickers to block if specified
+		if self.block:
+			self.block_set = set()
+
 	
 	# Buying of real cryto
 	def buy_crypto(self, ticker, buy_volume):
@@ -220,11 +226,23 @@ class binance_api:
 		tousd1 = pair[0]+'/USDT'
 		tousd2 = pair[1]+'/USDT'
 
+		# If there is a block put on trading this ticker
+		if self.block:
+			if ticker in self.block_set:
+				print('\nTrade of ' + ticker + ' blocked in ' + str(self.block_set))
+				return
+
 		# Buy order
 		if not simulate:
 			buy_trade, buy_volume = self.buy_crypto(ticker, buy_volume)
 		else:
 			buy_trade = self.simulate_trade(True, buy_volume, ticker, tousd2)
+		
+		# When bought add and blocker flag set
+		if self.block:
+			self.block_set.add(ticker)
+
+			print('Added to blockset '+str(self.block_set))
 
 		# Sell in multiple stages based on hold_times
 		prev_sell_time = 0
@@ -239,6 +257,11 @@ class binance_api:
 				sell_trades.append(self.sell_crypto(ticker, sell_volume, buy_trade))
 			else:
 				sell_trades.append(self.simulate_trade(False, sell_volume, ticker, tousd2))
+
+		# Remove block when trade finishes
+		if self.block:
+			self.block_set.remove(ticker)
+			print('Removinng from block set' + str(self.block_set))
 
 		print('\n\nTRADING FINISHED\n')
 
