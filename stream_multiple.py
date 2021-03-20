@@ -77,6 +77,11 @@ class Listener(StreamListener):
 			if status.user.id not in self.user_ids:
 				return
 
+			# Check for retweet
+			if len(full_text) >= 2:
+				if full_text[:3] == 'RT':
+					return
+
 			print('\n\n'+'-'*25 + ' New Tweet ' + '-' * 25)
 			print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
 
