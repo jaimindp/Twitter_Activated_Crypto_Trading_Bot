@@ -44,12 +44,11 @@ def read_twitter_keys(keys):
 
 # Load keys, keywords and users 
 api_keys = load_json('../keys.json')
-users = load_json('users.json')
 cryptos = load_json('keywords.json')
 twitter_keys = read_twitter_keys(api_keys)
 
 if 'prev_trades' in os.listdir():
-	json_files = list(filter(lambda x : x.endswith('.json'),os.listdir()))
+	json_files = list(filter(lambda x : x.endswith('.json') and x not in ['keywords.json','users.json'],os.listdir()))
 	print('\nChoose accounts to follow: '+'%s  ' * len(json_files) % tuple([file+' ('+str(i)+') ' for i, file in enumerate(json_files)]))
 	accounts = input()
 	full_ex = False
@@ -63,6 +62,7 @@ else:
 
 print('\nUsers: e.g. "coinbase,CoinbasePro,binance" or "all" from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
 usernames = input()
+skip_input = False
 if not usernames:
 	users = ['ArbitrageDaddy']
 	skip_input = True
