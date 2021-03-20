@@ -79,7 +79,7 @@ class Listener(StreamListener):
 
 			# Check for retweet
 			if len(full_text) >= 2:
-				if full_text[:3] == 'RT':
+				if full_text[:2] == 'RT':
 					return
 
 			print('\n\n'+'-'*25 + ' New Tweet ' + '-' * 25)
