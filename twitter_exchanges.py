@@ -143,7 +143,9 @@ elif '3' in sys.argv:
 
 
 if simulate:
-	print('\nSIMULATION TRADING\n')
+	print('\n'+'-'*10+'  SIMULATION TRADING  '+'-'*10+'\n')
+else:
+	print('\n'+'-'*10+'  LIVE TRADING  '+'-'*10+'\n')
 
 # Inintilizing a file of jsons to log trades
 logfile = False

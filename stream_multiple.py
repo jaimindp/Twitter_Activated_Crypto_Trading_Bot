@@ -195,7 +195,10 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	# Keyboard interrupt kills the whole program
 	except KeyboardInterrupt as e:
 		stream.disconnect()
-		print("\nStopped stream")
+		print('\n\n'+'-'*50)
+		print('/'*15+'   Stopped Stream   '+'\\'*15)
+		print('-'*50)
+		print('\nWaiting for trades to finish\n')
 		exit()
 	
 	# Disconnect the stream and kill the thread looking for prices
