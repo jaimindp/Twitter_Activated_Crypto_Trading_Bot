@@ -59,32 +59,33 @@ else:
 	exchange_keywords = load_json('exchange_keywords.json')
 
 # Get user inputs
+# Users to track
+
+print('\nUsers: e.g. "coinbase,CoinbasePro,binance" or "all" from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
+usernames = input()
+if not usernames:
+	users = ['ArbitrageDaddy']
+	skip_input = True
+elif usernames == 'all':
+	users = list(filter(lambda x : x not in ['ArbitrageDaddy', 'elonmusk'],[i for i in exchange_keywords.keys()]))
+	print(users)
+else:
+	users = usernames.split(',')
+users = {key:exchange_keywords[key] for key in users}
+
+
 # Sell currency
 print('\nEnter currency to sell: btc, usdt')
-sell_input = input()
-if not sell_input:
-	sell_coin = 'BTC'
-	skip_input = True
-else:
-	sell_coin  = cryptos[sell_input]['symbol']
-	skip_input = False
-
-# Users to track
+sell_coin = 'BTC'
 if not skip_input:
-	print('\nUsers: e.g. "coinbase,CoinbasePro,binance" or "all" from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
-	usernames = input()
-	if not usernames:
-		users = ['ArbitrageDaddy']
+	sell_input = input()
+	if not sell_input:
+		sell_coin = 'BTC'
 		skip_input = True
-	elif usernames == 'all':
-		users = list(filter(lambda x : x not in ['ArbitrageDaddy', 'elonmusk'],[i for i in exchange_keywords.keys()]))
-		print(users)
-
 	else:
-		users = usernames.split(',')
-else:
-	users = ['ArbitrageDaddy']
-users = {key:exchange_keywords[key] for key in users}
+		sell_coin  = cryptos[sell_input]['symbol']
+		skip_input = False
+
 
 # Time after buying before selling
 hold_time = [1]

@@ -82,7 +82,7 @@ class Listener(StreamListener):
 				if full_text[:2] == 'RT':
 					return
 
-			print('\n\n'+'-'*25 + ' New Tweet ' + '-' * 25)
+			print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
 			print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
 
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
@@ -119,10 +119,15 @@ class Listener(StreamListener):
 								pair = [pairs[0][j], pairs[1]]
 								coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
 								print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
+
+								# Start the buy thread
 								t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
 								t.start()
 								successful = True
+								
+								# Break means only execute on one coin
 								break
+
 							except Exception as e:
 								print('\nTried executing trade with ticker %s, did not work' % str(pair))
 								print(traceback.format_exc())
