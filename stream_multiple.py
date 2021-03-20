@@ -81,7 +81,7 @@ class Listener(StreamListener):
 			print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
 
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
-			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted is False:
+			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and status.in_reply_to_status_id is None and status.retweeted == False:
 				if self.full_ex: time.sleep(full_ex)
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
