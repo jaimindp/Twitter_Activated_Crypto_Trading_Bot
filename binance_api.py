@@ -248,7 +248,6 @@ class binance_api:
 		prev_sell_time = 0
 		sell_trades = []
 		for hold, sell_volume in zip(hold_times, sell_volumes):
-			print('\nHolding %d, last time:%d' % (hold, prev_sell_time))
 			time.sleep(hold - prev_sell_time)
 			prev_sell_time = hold
 
