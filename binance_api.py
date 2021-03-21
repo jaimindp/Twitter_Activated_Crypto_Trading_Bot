@@ -261,7 +261,7 @@ class binance_api:
 		# Remove block when trade finishes
 		if self.block:
 			self.block_set.remove(ticker)
-			print('Removinng from block set' + str(self.block_set))
+			print('Removing %s from block set' % (ticker))
 
 		print('\n\nTRADING FINISHED\n')
 

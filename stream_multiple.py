@@ -158,7 +158,7 @@ class Listener(StreamListener):
 
 
 # Stream tweets
-def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None, full_ex=True):
+def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None, full_ex=True, exchange_data=None):
 	
 	# Set and list of ids of users tracked
 	user_ids_list = [i['id'] for i in users.values()]
@@ -169,8 +169,9 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	if buy_coin:
 		coin_subset = [buy_coin]
 
-	exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin, coin_subset=coin_subset)
-	time.sleep(3)
+	if exchange_data is None:
+		exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin, coin_subset=coin_subset)
+		time.sleep(3)
 	
 	# Create the Tweepy streamer
 	listener = Listener(users, user_ids_set, sell_coin, hold_times, buy_volume, simulate, exchange, exchange_data, log_file=log_file, buy_coin=buy_coin, full_ex=full_ex)
