@@ -79,9 +79,8 @@ class Listener(StreamListener):
 				return
 
 			# Check for retweet
-			if len(full_text) >= 2:
-				if full_text[:2] == 'RT':
-					return
+			if full_text.startswith('RT'):
+				return
 
 			print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
 			print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
@@ -99,6 +98,7 @@ class Listener(StreamListener):
 						print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 						t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
 						t.start()
+
 					except Exception as e:
 						print('\nTried executing trade with ticker %s/%s, did not work' % (self.buy_coin,self.sell_coin))
 						print(e)
