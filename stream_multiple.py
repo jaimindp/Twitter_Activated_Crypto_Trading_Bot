@@ -46,10 +46,6 @@ class Listener(StreamListener):
 			if matches:
 				return [matches, self.sell_coin]
 
-		# String manipulation and finding coins
-		text = text.replace('\n', ' ')
-		text = text.replace('/',  ' ')
-
 		matches = re.findall('[A-Z]{%d}' % num_letters, text)
 		
 		# Finding the intersection but maintaining order
@@ -106,6 +102,10 @@ class Listener(StreamListener):
 				else:	
 					# Loop over possible coin string lengths and get coins, firstflag is the first try to trade, successful is a flag if traded or not
 					firstflag, successful = True, False
+					
+					# String manipulation and finding coins
+					full_text = full_text.replace('\n', ' ')
+					full_text = full_text.replace('/',  ' ')
 					for i in [3,4,5,2,6]:
 						pairs = self.substring_matches(full_text, i, firstflag)
 						firstflag = False
