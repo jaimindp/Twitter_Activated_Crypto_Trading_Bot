@@ -23,7 +23,7 @@ class Twitter_Query:
 				try:
 					last_time = time.time()
 
-					# Put in handling for errornous returns (if most recent tweet is not actually the most recent tweet)
+					# Put in handling for erroneous returns (if most recent tweet is not actually the most recent tweet)
 					tweets = self.api.user_timeline(user_id = user[1], 
 					                           count = 1,
 					                           include_rts = True,

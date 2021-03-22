@@ -7,29 +7,52 @@ from datetime import datetime
 import traceback
 from binance_api import *
 from stream_multiple import *
-from query import *
+from query_multiple import *
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True):
+def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True, both=False):
 
-	exchange = binance_api(api_keys, logfile=logfile)
+	# Create exchange object and start querying prices as a daemon (cancels when the main thread ends)
+	exchange = binance_api(api_keys, logfile=logfile, block=both)
+	exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin)
+	daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(volume,20*60))
+	daemon.setDaemon(True)
+	daemon.start()
+	time.sleep(3)
 
 	# Stream tweets
-	if stream:
-		while 1:
+	if not both:
+		if stream:
 			# From stream_multiple.py file
-			try:
-				stream_tweets(api, users, sell_coin, hold_time, volume, simulate, exchange, full_ex=full_ex)
-			except Exception as e:
-				print(e)
-				# print(traceback.format_exc())
-				print('%s\n'%(datetime.now().strftime('%b %d - %H:%M:%S')))
-				time.sleep(10)
-	
+			stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data)
+		else:
+			# Query tweets from query.py file
+			query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data)
 	else:
-		# Query tweets from query.py file
-		twitter_q = Twitter_Query(api, exchange)	
-		twitter_q.query(users, sell_coin, hold_time, volume, simulate, wait_tweet, print_timer)
+
+		# t2 = threading.Thread(target=stream_tweets, args=(api, users, sell_coin, hold_times, buy_volume, simulate, exchange), kwargs={'full_ex':full_ex, 'exchange_data':exchange_data})
+		# t2.setDaemon(True)
+		# t2.start()
+
+		cancel = [False]
+		# query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data)
+		t1 = threading.Thread(target=query_tweets, args=(api, users, sell_coin, hold_times, buy_volume, simulate, exchange), kwargs={'print_timer':print_timer, 'full_ex':full_ex, 'exchange_data':exchange_data, 'cancel':cancel})
+		t1.start()
+
+		stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data)
+		# try:
+		# 	while 1:
+		# 		time.sleep(300)
+		# except KeyboardInterrupt as e:
+		# 	print('\nKeyboard interrupt handling:\n\nExiting')
+		print('Setting cancel to true')
+		cancel[0] = True
+		while threading.active_count() > 4 + len(users):
+			print('\nThere are %d trades left to clear' %  (threading.active_count() - 4 + len(users)))
+			time.sleep(20)
+		print('exiting, can finish')
+		exit()
+
 
 # Loads a json file
 def load_json(filepath):
@@ -47,6 +70,9 @@ api_keys = load_json('../keys.json')
 cryptos = load_json('keywords.json')
 twitter_keys = read_twitter_keys(api_keys)
 
+
+
+# Get command line user inputs
 if 'prev_trades' in os.listdir():
 	json_files = list(filter(lambda x : x.endswith('.json') and x not in ['keywords.json','users.json'],os.listdir()))
 	print('\nChoose accounts to follow: '+'%s  ' * len(json_files) % tuple([file+' ('+str(i)+') ' for i, file in enumerate(json_files)]))
@@ -57,9 +83,8 @@ else:
 	full_ex = True
 	exchange_keywords = load_json('exchange_keywords.json')
 
-# Get user inputs
-# Users to track
 
+# Users to track
 print('\nUsers: e.g. "coinbase,CoinbasePro,binance" or "all" from: '+'%s '* len(exchange_keywords) % tuple(list(exchange_keywords.keys())))
 usernames = input()
 skip_input = False
@@ -68,11 +93,10 @@ if not usernames:
 	skip_input = True
 elif usernames == 'all':
 	users = list(filter(lambda x : x not in ['ArbitrageDaddy', 'elonmusk'],[i for i in exchange_keywords.keys()]))
-	print(users)
 else:
 	users = usernames.split(',')
+print(users)
 users = {key:exchange_keywords[key] for key in users}
-
 
 # Sell currency
 print('\nEnter currency to sell: btc, usdt')
@@ -88,7 +112,7 @@ if not skip_input:
 
 
 # Time after buying before selling
-hold_time = [1]
+hold_time = [5]
 if not skip_input:
 	print('\nHodl time(s) seconds e.g. 200 or 30,60,90: ')
 	hold_time = input()
@@ -122,11 +146,13 @@ if not skip_input:
 	if test == 'n': simulate = False
 
 # User to track, empty to skip tweet waiting
-stream = True
+stream, both = True, False
 if not skip_input:
 	print('\nStream or query s/q: ')
 	stream_input = input()
-	if stream_input != 'q':
+	if stream_input == 'b':
+		both = True
+	elif stream_input != 'q':
 		stream = True
 	else:
 		stream = False
@@ -152,12 +178,16 @@ logfile = False
 if 'l' in sys.argv:
 	logfile = True
 
+print_timer = False
+if 'p' in sys.argv:
+	print_timer = True
+
 # Use twitter API
 auth = tweepy.OAuthHandler(twitter_keys['consumer_key'], twitter_keys['consumer_secret'])
 auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_token_secret'])
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile, full_ex=full_ex)
+tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile, full_ex=full_ex, print_timer=print_timer, both=both)
 
 

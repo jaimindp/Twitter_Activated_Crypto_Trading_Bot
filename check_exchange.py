@@ -111,8 +111,6 @@ class exchange_pull:
 				self.exchange = ccxt.binance({'apiKey':self.my_exchange.api_keys['api_key'], 'secret':self.my_exchange.api_keys['secret_key']})
 				print('Pulled live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
 			
-
-
 			self.count_pulls += 1
 			time.sleep(interval)
 
