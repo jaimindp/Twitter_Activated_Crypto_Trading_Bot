@@ -53,11 +53,14 @@ class Listener(StreamListener):
 		matches = [value for value in ordered_matches if value in self.exchange_data.cryptos]
 
 		# Specific ticker of 1INCH symbol
+		new_matches = []
 		for i in range(len(matches)):
 			if matches[i] == 'INCH':
 				matches[i] = '1INCH'
+			if matches[i] not in res:
+				new_matches.append(matches[i])
 
-		return [matches, self.sell_coin]
+		return [new_matches, self.sell_coin]
 
 	# Code to run on tweet
 	def on_status(self, status):
