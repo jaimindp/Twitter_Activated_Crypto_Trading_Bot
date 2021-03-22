@@ -29,22 +29,14 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 			# Query tweets from query.py file
 			query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data)
 	else:
-
-		# t2 = threading.Thread(target=stream_tweets, args=(api, users, sell_coin, hold_times, buy_volume, simulate, exchange), kwargs={'full_ex':full_ex, 'exchange_data':exchange_data})
-		# t2.setDaemon(True)
-		# t2.start()
-
+		# Start the query as a thread with cancellling mechanism
 		cancel = [False]
-		# query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data)
 		t1 = threading.Thread(target=query_tweets, args=(api, users, sell_coin, hold_times, buy_volume, simulate, exchange), kwargs={'print_timer':print_timer, 'full_ex':full_ex, 'exchange_data':exchange_data, 'cancel':cancel})
 		t1.start()
 
+		# Stream tweets
 		stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data)
-		# try:
-		# 	while 1:
-		# 		time.sleep(300)
-		# except KeyboardInterrupt as e:
-		# 	print('\nKeyboard interrupt handling:\n\nExiting')
+
 		print('Setting cancel to true')
 		cancel[0] = True
 		while threading.active_count() > 4 + len(users):

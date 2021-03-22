@@ -133,7 +133,7 @@ class Listener(StreamListener):
 
 							except Exception as e:
 								print('\nTried executing trade with ticker %s, did not work' % str(pair))
-								print(traceback.format_exc())
+								# print(traceback.format_exc())
 								print(e)
 						if successful:
 							break

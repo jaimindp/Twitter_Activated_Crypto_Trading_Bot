@@ -67,7 +67,6 @@ class exchange_pull:
 	def buy_sell_volumes(self, buy_dollars, interval): # FIND OUT ABOUT LEVERAGED LIMITS AND SELL INCREMENTS
 
 		while 1:
-
 			# Set as cancellable thread on wakeup
 			if self.stopflag:
 				return
