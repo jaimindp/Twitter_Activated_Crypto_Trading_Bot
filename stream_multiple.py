@@ -41,7 +41,6 @@ class Listener(StreamListener):
 				return [['DOGE'], self.sell_coin]
 
 			# Look for $ sign
-			text = text.replace('\n' , ' ')
 			matches = re.findall('(?<=\$)[^\ ]+', text)
 			if matches:
 				return [matches, self.sell_coin]
@@ -57,7 +56,7 @@ class Listener(StreamListener):
 		for i in range(len(matches)):
 			if matches[i] == 'INCH':
 				matches[i] = '1INCH'
-			if matches[i] not in res:
+			if matches[i] not in new_matches:
 				new_matches.append(matches[i])
 
 		return [new_matches, self.sell_coin]
