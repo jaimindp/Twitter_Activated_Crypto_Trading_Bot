@@ -37,12 +37,12 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 		# Stream tweets
 		stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data)
 
-		print('Setting cancel to true')
+		print('\nSetting cancel to true')
 		cancel[0] = True
 		while threading.active_count() > 4 + len(users):
-			print('\nThere are %d trades left to clear' %  (threading.active_count() - 4 + len(users)))
+			print('\nThere are %d trades left to clear' %  (threading.active_count() - 4 - len(users)))
 			time.sleep(20)
-		print('exiting, can finish')
+		print('Exiting, can finish')
 		exit()
 
 

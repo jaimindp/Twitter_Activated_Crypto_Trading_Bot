@@ -183,33 +183,32 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	# Start stream and query prices
 	print('\nStarting stream\n')
 	
+	# Create daemon thread which exits when other thread exits
+	daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
+	daemon.setDaemon(True)
+	daemon.start()
+
 	# Try catch for different termination procedures
-	try:
-		# Create daemon thread which exits when other thread exits
-		daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
-		daemon.setDaemon(True)
-		daemon.start()
-
-		# Start streaming tweets
-		if keywords:
-			stream.filter(follow=user_ids_list,track=keywords)
-		else:
-			stream.filter(follow=user_ids_list)
+	while 1:
+		try:
+			# Start streaming tweets
+			if keywords:
+				stream.filter(follow=user_ids_list,track=keywords)
+			else:
+				stream.filter(follow=user_ids_list)
+			
+		# Keyboard interrupt kills the whole program
+		except KeyboardInterrupt as e:
+			stream.disconnect()
+			print('\n\n'+'-'*50)
+			print('/'*15+'   Stopped Stream   '+'\\'*15)
+			print('-'*50)
+			print('\nWaiting for trades to finish\n')
+			return
 		
-	# Keyboard interrupt kills the whole program
-	except KeyboardInterrupt as e:
-		stream.disconnect()
-		print('\n\n'+'-'*50)
-		print('/'*15+'   Stopped Stream   '+'\\'*15)
-		print('-'*50)
-		print('\nWaiting for trades to finish\n')
-		# exit()
-		return
-	
-	# Disconnect the stream and kill the thread looking for prices
-	finally:
-		print('\nDisconnected Stream\n')
-		exchange_data.stopflag = True
-		stream.disconnect()
-
+		# Disconnect the stream and kill the thread looking for prices
+		finally:
+			print('\nDisconnected Stream\n')
+			exchange_data.stopflag = True
+			stream.disconnect()
 
