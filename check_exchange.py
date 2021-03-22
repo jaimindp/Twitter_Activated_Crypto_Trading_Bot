@@ -1,17 +1,20 @@
 import time
 import traceback
+import ccxt
 
 # Gathers prices from exchange to trade against coin
 class exchange_pull:
 
-	def __init__(self, exchange, hold_times, base_coin='BTC',coin_subset=None):
+	def __init__(self, exchange, hold_times, base_coin='BTC', coin_subset=None):
 		self.exchange = exchange.exchange
+		self.my_exchange = exchange
 		self.base_coin = base_coin
 		self.stopflag = False
 		self.count_pulls = 0
 		self.hold_times = hold_times
 		self.coin_subset = coin_subset
 		self.buy_sell_vols = {}
+
 
 	# Retrieve tickers which have volume and trades against the base coin
 	def get_tickers(self):
@@ -102,10 +105,13 @@ class exchange_pull:
 					sell_vols_rounded.append(round((buy_vol_rounded - sell_cumulative) * 1/step_size) * step_size)
 					self.buy_sell_vols[coin] = [buy_vol_rounded, sell_vols_rounded]
 			
+			# Print 1 in 10 updates
 			if self.count_pulls % 10 == 0:
+				self.exchange = ccxt.binance({'apiKey':self.my_exchange.api_keys['api_key'], 'secret':self.my_exchange.api_keys['secret_key']})
 				print('Pulled live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
-				if len(self.cryptos) == 1:
-					print('Current buy volume in crypto: %.8f %s then selling %d times' % (self.buy_sell_vols[coin][0], self.coin_subset[0], len(self.buy_sell_vols[coin][1])))
+			
+				# Refresh the whole exchange so new tickers are included not just new prices		
+
 
 			self.count_pulls += 1
 			time.sleep(interval)
