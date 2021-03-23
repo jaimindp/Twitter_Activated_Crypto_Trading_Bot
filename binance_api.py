@@ -262,7 +262,7 @@ class binance_api:
 			self.block_set.remove(ticker)
 			print('Removing %s from block set' % (ticker))
 
-		print('\n\nTRADING FINISHED\n')
+		print('\n\nTRADE FINISHED\n')
 
 		# Print summary 
 		try:
