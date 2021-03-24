@@ -151,6 +151,7 @@ class Twitter_Query:
 
 				# Checking if the thread has been cancelled
 				if self.cancel[0]:
+					print('Query thread cancelled')
 					exit()
 					
 				local_time = tz.localize(datetime.now())
@@ -211,7 +212,7 @@ def query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchan
 			# Create a thread for each user here
 			t = threading.Thread(target=querys.query, args=({'username':user,'id':v['id']}, delay), kwargs={'print_timer':print_timer})
 			t.start()
-			
+
 	except Exception as e:
 		print(e)
 

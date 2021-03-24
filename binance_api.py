@@ -269,6 +269,9 @@ class binance_api:
 			if ticker in self.block_set:
 				print('\nTrade of ' + ticker + ' blocked in ' + str(self.block_set))
 				return
+			# When bought add and blocker flag set
+			self.block_set.add(ticker)
+			print('Added to blockset '+str(self.block_set))
 
 		# Buy order
 		if not simulate:
@@ -276,11 +279,6 @@ class binance_api:
 		else:
 			buy_trade = self.simulate_trade(True, buy_volume, ticker, tousd2)
 		
-		# When bought add and blocker flag set
-		if self.block:
-			self.block_set.add(ticker)
-
-			print('Added to blockset '+str(self.block_set))
 
 		# Sell in multiple stages based on hold_times
 		prev_sell_time = 0
@@ -310,7 +308,7 @@ class binance_api:
 			print(e)
 
 		# Send telegram message
-		if 'telegram_keys.json' in os.listdir('../'): #and not self.simulate:
+		if 'telegram_keys.json' in os.listdir('../') and not simulate:
 			self.send_telegram(ticker, buy_total, sell_total, gain_text, status, simulate)
 
 		# Log trade

@@ -160,7 +160,7 @@ class Listener(StreamListener):
 
 
 # Stream tweets
-def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None, full_ex=True, exchange_data=None):
+def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, keywords=None, log_file=None, buy_coin=None, full_ex=True, exchange_data=None, cancel=[False]):
 	
 	# Set and list of ids of users tracked
 	user_ids_list = [i['id'] for i in users.values()]
@@ -203,6 +203,7 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 			print('/'*15+'   Stopped Stream   '+'\\'*15)
 			print('-'*50)
 			print('\nWaiting for trades to finish\n')
+			cancel[0] = True
 			return
 		
 		# Disconnect the stream and kill the thread looking for prices
@@ -210,4 +211,5 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 			print('\nDisconnected Stream\n')
 			exchange_data.stopflag = True
 			stream.disconnect()
+
 

@@ -20,29 +20,44 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 	daemon.start()
 	time.sleep(3)
 
+	cancel = [False]
+
 	# Stream tweets
 	if not both:
 		if stream:
 			# From stream_multiple.py file
-			stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data)
+			stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
 		else:
 			# Query tweets from query.py file
-			query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data)
+			query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
+
+			# Sleeping wait for keyboard interrupt
+			while 1: 
+				try:
+					time.sleep(2000)
+				except KeyboardInterrupt:
+					print('\nSetting cancel to true')
+					cancel[0] = True
+
+					while threading.active_count() > 2:
+						time.sleep(1)
+						print('There are %d trades left to sell' %  (threading.active_count() - 2))
+					print('\nExiting main thread')
+					exit()
 	else:
 		# Start the query as a thread with cancellling mechanism
-		cancel = [False]
 		t1 = threading.Thread(target=query_tweets, args=(api, users, sell_coin, hold_times, buy_volume, simulate, exchange), kwargs={'print_timer':print_timer, 'full_ex':full_ex, 'exchange_data':exchange_data, 'cancel':cancel})
 		t1.start()
 
 		# Stream tweets
-		stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data)
+		stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
 
 		print('\nSetting cancel to true')
 		cancel[0] = True
 		while threading.active_count() > 4 + len(users):
 			print('\nThere are %d trades left to clear' %  (threading.active_count() - 4 - len(users)))
 			time.sleep(20)
-		print('Exiting, can finish')
+		print('\nExiting main thread')
 		exit()
 
 
