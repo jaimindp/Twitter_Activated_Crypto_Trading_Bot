@@ -84,7 +84,7 @@ API keys are kept in a json, one directory up from repo ../keys.json
 - Trade notification system for user
 	- Slack API
 	- Telegram API (done)
-- Improve trade logging system
+- Improve trade logging system (done)
 - Machine Learning features
 	- Sentiment feature
 		- For size of position 
