@@ -55,6 +55,7 @@ class Twitter_Query:
 
 		return [new_matches, self.sell_coin]
 
+	
 	# Parse a tweet and execute trade
 	def parse_tweet(self, new_tweet, utc_time):
 		full_text = new_tweet.full_text
@@ -69,7 +70,7 @@ class Twitter_Query:
 					pair = [self.buy_coin, self.sell_coin]
 					coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
 					print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
-					t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':status})
+					t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':new_tweet})
 					t.start()
 
 				except Exception as e:
@@ -99,7 +100,7 @@ class Twitter_Query:
 							print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 
 							# Start the buy thread
-							t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+							t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':new_tweet})
 							t.start()
 							successful = True
 							

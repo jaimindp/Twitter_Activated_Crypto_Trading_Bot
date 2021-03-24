@@ -21,7 +21,6 @@ class binance_api:
 		if self.block:
 			self.block_set = set()
 
-	
 	# Buying of real cryto
 	def buy_crypto(self, ticker, buy_volume):
 		
@@ -106,6 +105,7 @@ class binance_api:
 			print('\nSold %.8f at %s' % (sell_volume, datetime.now().strftime('%b %d - %H:%M:%S')))
 
 		return sell_trade
+
 
 	# Get data from self.exchange and print it 
 	def simulate_trade(self, buy, volume, ticker, conversion):
@@ -280,8 +280,18 @@ class binance_api:
 		if self.logfile:
 			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
 
-			# Saving format: start_json and time_started
+			# Saving name format: time_started, json_file_used, simluation/live
 			with open("prev_trades/trades_%s_binance_%s_%s.txt" % (self.started_time.strftime('%Y-%m-%d_%H-%M-%S'), self.account_json, 'simulation' if simulate else 'live'), "a") as log_name:
-				json.dump({'user':status.user.screen_name,'tweet':status.text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
+				# If scrape
+				if type(status) == dict:
+					json.dump({'url':stats['url'],'update_time':status['update_time'].strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)	
+
+				# If tweet from stream or query
+				else:
+					try:
+						full_text = status.text
+					except:
+						full_text = status.full_text
+					json.dump({'user':status.user.screen_name,'tweet':full_text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
 				log_name.write('\n')
 
