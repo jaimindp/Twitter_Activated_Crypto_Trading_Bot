@@ -21,6 +21,7 @@ class binance_api:
 		if self.block:
 			self.block_set = set()
 
+	# Reset the exchange
 	def refresh_exchange(self):
 		self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 

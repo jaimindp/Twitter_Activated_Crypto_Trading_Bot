@@ -69,8 +69,8 @@ full_ex = True
 if 'prev_trades' in os.listdir():
 	json_files = list(filter(lambda x : x.endswith('.json') and x not in ['keywords.json','users.json'],os.listdir()))
 	print('\nChoose accounts to follow: '+'%s  ' * len(json_files) % tuple([file+' ('+str(i)+') ' for i, file in enumerate(json_files)]))
+	if 'query_futures.py' in os.listdir(): full_ex = False
 	accounts = input()
-	full_ex = False
 	account_json_str = json_files[int(accounts)]
 	exchange_keywords = load_json(account_json_str)
 else:

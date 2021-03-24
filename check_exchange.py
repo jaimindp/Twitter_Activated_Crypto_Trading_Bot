@@ -67,6 +67,12 @@ class exchange_pull:
 	def buy_sell_volumes(self, buy_dollars, interval): # FIND OUT ABOUT LEVERAGED LIMITS AND SELL INCREMENTS
 
 		while 1:
+
+			# Refresh the whole exchange so new tickers are included not just new prices		
+			if self.count_pulls % 10 == 0:
+				print('Exchange refreshed')
+				self.my_exchange.refresh_exchange()
+
 			# Set as cancellable thread on wakeup
 			if self.stopflag:
 				return
@@ -106,8 +112,6 @@ class exchange_pull:
 			
 			# Print 1 in 10 updates
 			if self.count_pulls % 10 == 0:
-				# Refresh the whole exchange so new tickers are included not just new prices		
-				self.exchange = ccxt.binance({'apiKey':self.my_exchange.api_keys['api_key'], 'secret':self.my_exchange.api_keys['secret_key']})
 				print('Pulled live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
 			
 			self.count_pulls += 1
