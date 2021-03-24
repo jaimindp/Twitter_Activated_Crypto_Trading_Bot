@@ -85,7 +85,7 @@ class Listener(StreamListener):
 
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']):
-				if self.full_ex: time.sleep(full_ex)
+				if self.full_ex: time.sleep(self.full_ex)
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
 
@@ -94,7 +94,7 @@ class Listener(StreamListener):
 						pair = [self.buy_coin, self.sell_coin]
 						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
 						print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
-						t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+						t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate,'status':status})
 						t.start()
 
 					except Exception as e:
@@ -124,7 +124,7 @@ class Listener(StreamListener):
 								print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 
 								# Start the buy thread
-								t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+								t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':status})
 								t.start()
 								successful = True
 								

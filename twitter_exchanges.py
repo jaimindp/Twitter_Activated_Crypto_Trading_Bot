@@ -10,10 +10,10 @@ from stream_multiple import *
 from query_multiple import *
 
 # Checks if a tweet from a user contains a particular trigger word
-def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True, both=False):
+def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream, wait_tweet=True, logfile=None, print_timer=False, full_ex=True, both=False, account_json=None):
 
 	# Create exchange object and start querying prices as a daemon (cancels when the main thread ends)
-	exchange = binance_api(api_keys, logfile=logfile, block=both)
+	exchange = binance_api(api_keys, logfile=logfile, block=both, account_json=account_json)
 	exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin)
 	daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(volume,20*60))
 	daemon.setDaemon(True)
@@ -65,15 +65,17 @@ twitter_keys = read_twitter_keys(api_keys)
 
 
 # Get command line user inputs
+full_ex = True
 if 'prev_trades' in os.listdir():
 	json_files = list(filter(lambda x : x.endswith('.json') and x not in ['keywords.json','users.json'],os.listdir()))
 	print('\nChoose accounts to follow: '+'%s  ' * len(json_files) % tuple([file+' ('+str(i)+') ' for i, file in enumerate(json_files)]))
 	accounts = input()
 	full_ex = False
-	exchange_keywords = load_json(json_files[int(accounts)])
+	account_json_str = json_files[int(accounts)]
+	exchange_keywords = load_json(account_json_str)
 else:
-	full_ex = True
-	exchange_keywords = load_json('exchange_keywords.json')
+	account_json_str = 'exchange_keywords.json'
+	exchange_keywords = load_json(account_json_str)
 
 
 # Users to track
@@ -180,6 +182,6 @@ auth.set_access_token(twitter_keys['access_token_key'], twitter_keys['access_tok
 api = tweepy.API(auth)
 
 # Execute function
-tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile, full_ex=full_ex, print_timer=print_timer, both=both)
+tweepy_pull(api, users, sell_coin, hold_time, volume, simulate, stream, wait_tweet=not skip_input, logfile=logfile, full_ex=full_ex, print_timer=print_timer, both=both, account_json=account_json_str[:-5])
 
 

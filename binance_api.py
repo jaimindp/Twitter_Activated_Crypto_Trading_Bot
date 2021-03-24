@@ -9,11 +9,13 @@ import sys
 class binance_api:
 
 	# Initialize
-	def __init__(self, api_keys, logfile=False, block=False):
+	def __init__(self, api_keys, logfile=False, block=False, account_json=None):
 		self.api_keys = {'api_key':api_keys['binance_keys']['api_key'],'secret_key':api_keys['binance_keys']['secret_key']}
 		self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
 		self.logfile = logfile
 		self.block = block
+		self.started_time = datetime.now()
+		self.account_json = account_json
 
 		# Set of tickers to block if specified
 		if self.block:
@@ -31,7 +33,7 @@ class binance_api:
 			except Exception as e:
 				print(e)
 				if i == 9:
-					print('Exiting')
+					print('Could not buy, exiting thread')
 					exit()
 				print('\nBuy did not work, trying again')
 
@@ -199,20 +201,23 @@ class binance_api:
 
 		# Sending a telegram message to myself
 		if 'telegram_keys.json' in os.listdir('../') and not simulate:
-			# if abs(gain_loss) > 0.5:
-			import telegram
-			with open('../telegram_keys.json') as json_file:
-				telegram_dict = json.load(json_file)
-			
-			full_info_text = '(%s) Bought %.6f and sold %.6f BTC\n' % (ticker, float(buy_total), float(sell_total))
-			full_info_text += gain_text
-			
-			bot = telegram.Bot(token=telegram_dict['api_key'])
-			bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
+			try:
+				import telegram
+				with open('../telegram_keys.json') as json_file:
+					telegram_dict = json.load(json_file)
+				
+				full_info_text = '(%s) Bought %.6f and sold %.6f BTC\n' % (ticker, float(buy_total), float(sell_total))
+				full_info_text += gain_text
+				
+				bot = telegram.Bot(token=telegram_dict['api_key'])
+				bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
+			except Exception as e:
+				print(e)
 
+		return gain_text
 
 	# Execute trade
-	def execute_trade(self, pair, hold_times=60, buy_volume=50, simulate=False):
+	def execute_trade(self, pair, hold_times=60, buy_volume=50, simulate=False, status=None):
 
 		# Dealing with buy_sell volume pair or just a buy_volume
 		if type(buy_volume) != list:
@@ -264,9 +269,9 @@ class binance_api:
 
 		print('\n\nTRADE FINISHED\n')
 
-		# Print summary 
+		# Print summary and log
 		try:
-			self.print_summary(simulate, ticker, buy_trade, sell_trades, tousd2)
+			gain_text = self.print_summary(simulate, ticker, buy_trade, sell_trades, tousd2)
 		except Exception as e:
 			print('\nFailed to print summary\n')
 			print(e)
@@ -274,10 +279,9 @@ class binance_api:
 		# Log trade
 		if self.logfile:
 			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
-			if 'prev_trades' not in os.listdir():
-				os.mkdir('prev_trades')
-			with open("prev_trades/trades_%s_binance_%s.txt" % (now,'simulation' if simulate else 'live'), "w") as log_name:
-				json.dump({'time':now,'buy':buy_trade,'sell':sell_trades}, log_name)
 
-
+			# Saving format: start_json and time_started
+			with open("prev_trades/trades_%s_binance_%s_%s.txt" % (self.started_time.strftime('%Y-%m-%d_%H-%M-%S'), self.account_json, 'simulation' if simulate else 'live'), "a") as log_name:
+				json.dump({'user':status.user.screen_name,'tweet':status.text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
+				log_name.write('\n')
 
