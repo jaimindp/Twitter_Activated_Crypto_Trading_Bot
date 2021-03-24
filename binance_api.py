@@ -21,6 +21,9 @@ class binance_api:
 		if self.block:
 			self.block_set = set()
 
+	def refresh_exchange(self):
+		self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
+
 	# Buying of real cryto
 	def buy_crypto(self, ticker, buy_volume):
 		
@@ -92,7 +95,7 @@ class binance_api:
 				elif 'insufficient balance' in str(error):
 					buy_volume = buy_volume * 0.9995
 				else:
-					self.exchange = ccxt.binance({'apiKey':self.api_keys['api_key'], 'secret':self.api_keys['secret_key']})
+					self.refresh_exchange()
 				print(e)
 				print('\n\nTrying to sell %.10f again' % buy_volume)
 		
@@ -196,25 +199,54 @@ class binance_api:
 		gain_loss = (sell_total - buy_total) * avg_bid_ask - sell_fee_dollar - buy_fee_dollar
 		gain_loss_percent = gain_loss / (buy_total * avg_bid_ask - sell_fee_dollar - buy_fee_dollar) * 100
 
-		gain_text = '\nGain/Loss: $%.6f   %.3f%%' % (gain_loss, gain_loss_percent)
+		gain_text = '\nProfit/Loss: $%.6f   %.3f%%' % (gain_loss, gain_loss_percent)
 		print(gain_text)
 
-		# Sending a telegram message to myself
-		if 'telegram_keys.json' in os.listdir('../') and not simulate:
-			try:
-				import telegram
-				with open('../telegram_keys.json') as json_file:
-					telegram_dict = json.load(json_file)
-				
-				full_info_text = '(%s) Bought %.6f and sold %.6f BTC\n' % (ticker, float(buy_total), float(sell_total))
-				full_info_text += gain_text
-				
-				bot = telegram.Bot(token=telegram_dict['api_key'])
-				bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
-			except Exception as e:
-				print(e)
+		return gain_text, buy_total, sell_total
 
-		return gain_text
+	# Send a telegram of the profits and losses
+	def send_telegram(self, ticker, buy_total, sell_total, gain_text, status, simulate):
+		
+		# Sending a telegram message to myself
+		import telegram
+		with open('../telegram_keys.json') as json_file:
+			telegram_dict = json.load(json_file)
+			if type(status) == dict:
+				full_info_text = '(%s) %s\nBought %.6f and sold %.6f BTC\n\n@%s - %s:\n"%s"\n' % (ticker, gain_text, float(buy_total), \
+					float(sell_total), status['url'], status['update_time'].strftime('%m/%d %H:%M:%S'), status['update_text'])
+			else:
+				try:
+					full_text = status.text
+				except:
+					full_text = status.full_text
+				full_info_text = '(%s) %s\nBought %.6f and sold %.6f BTC\n\n@%s - %s:\n"%s"\n' % (ticker, gain_text, float(buy_total), \
+					float(sell_total), status.user.screen_name, status.created_at.strftime('%m/%d %H:%M:%S'), full_text)
+			
+			bot = telegram.Bot(token=telegram_dict['api_key'])
+			bot.send_message(chat_id=telegram_dict['chat_id'], text=full_info_text)
+
+
+	# Log the trade
+	def log_trade(self, ticker, buy_volume, hold_times, buy_trade, sell_trades, gain_text, status, simulate):
+		# Log trade
+		if self.logfile:
+			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
+
+			# Saving name format: time_started, json_file_used, simluation/live
+			with open("prev_trades/trades_%s_binance_%s_%s.txt" % (self.started_time.strftime('%Y-%m-%d_%H-%M-%S'), self.account_json, 'simulation' if simulate else 'live'), "a") as log_name:
+				# If status is a dict, the message was from a web scrape
+				if type(status) == dict:
+					json.dump({'url':status['url'],'update_text':status['update_text'],'update_time':status['update_time'].strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)	
+
+				# If tweet from stream or query
+				else:
+					try:
+						full_text = status.text
+					except:
+						full_text = status.full_text
+					json.dump({'user':status.user.screen_name,'tweet':full_text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
+				log_name.write('\n')
+
 
 	# Execute trade
 	def execute_trade(self, pair, hold_times=60, buy_volume=50, simulate=False, status=None):
@@ -271,27 +303,16 @@ class binance_api:
 
 		# Print summary and log
 		try:
-			gain_text = self.print_summary(simulate, ticker, buy_trade, sell_trades, tousd2)
+			gain_text, buy_total, sell_total = self.print_summary(simulate, ticker, buy_trade, sell_trades, tousd2)
 		except Exception as e:
 			print('\nFailed to print summary\n')
 			print(e)
 
+		# Send telegram message
+		if 'telegram_keys.json' in os.listdir('../'): #and not self.simulate:
+			self.send_telegram(ticker, buy_total, sell_total, gain_text, status, simulate)
+
 		# Log trade
 		if self.logfile:
-			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
-
-			# Saving name format: time_started, json_file_used, simluation/live
-			with open("prev_trades/trades_%s_binance_%s_%s.txt" % (self.started_time.strftime('%Y-%m-%d_%H-%M-%S'), self.account_json, 'simulation' if simulate else 'live'), "a") as log_name:
-				# If scrape
-				if type(status) == dict:
-					json.dump({'url':stats['url'],'update_time':status['update_time'].strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)	
-
-				# If tweet from stream or query
-				else:
-					try:
-						full_text = status.text
-					except:
-						full_text = status.full_text
-					json.dump({'user':status.user.screen_name,'tweet':full_text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
-				log_name.write('\n')
-
+			self.log_trade(ticker, buy_volume, hold_times, buy_trade, sell_trades, gain_text, status, simulate)
+			
