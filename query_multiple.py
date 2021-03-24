@@ -69,7 +69,7 @@ class Twitter_Query:
 					pair = [self.buy_coin, self.sell_coin]
 					coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
 					print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
-					t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate})
+					t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':status})
 					t.start()
 
 				except Exception as e:
