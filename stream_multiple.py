@@ -204,8 +204,6 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 			print('-'*50)
 			print('\nWaiting for trades to finish\n')
 			cancel[0] = True
-			# return
-			# exit()
 			raise KeyboardInterrupt
 		
 		# Disconnect the stream and kill the thread looking for prices
