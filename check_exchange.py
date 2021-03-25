@@ -112,7 +112,7 @@ class exchange_pull:
 			
 			# Print 1 in 10 updates
 			if self.count_pulls % 10 == 0:
-				print('Pulled live prices (updates every 20 mins), there are %d tradeable tickers with %s' % (len(self.cryptos), self.base_coin))
+				print('Pulled live prices (updates every 20 mins), there are %d tradeable tickers with %s - %s' % (len(self.cryptos), self.base_coin, datetime.now().strftime('%m/%d - %H:%M:%S')))
 			
 			self.count_pulls += 1
 			time.sleep(interval)
