@@ -1,6 +1,7 @@
 import time
 import traceback
 import ccxt
+import datetime
 
 # Gathers prices from exchange to trade against coin
 class exchange_pull:
