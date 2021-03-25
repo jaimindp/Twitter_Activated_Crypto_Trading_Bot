@@ -66,15 +66,15 @@ class Listener(StreamListener):
 	
 		# Tweets with mentions
 		try:
+			# Check tweet is from a user being tracked and that it is not a reply status
+			if status.user.id not in self.user_ids or not status.in_reply_to_status_id is None or status.is_quote_status:
+				return
+
 			# Handling extended vs not extended tweets
 			if not status.truncated:
 				full_text = status.text
 			else:
 				full_text = status.extended_tweet['full_text']
-
-			# Check tweet is from a user being tracked and that it is not a reply status
-			if status.user.id not in self.user_ids or not status.in_reply_to_status_id is None:
-				return
 
 			# Check for retweet
 			if full_text.startswith('RT'):
