@@ -141,7 +141,8 @@ class Listener(StreamListener):
 						print('\nNo valid tickers to trade in tweet')
 
 			else:
-				print('\nTrade not triggered')
+				print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
+				print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
 
 		except Exception as e:
 			print('\nError when handling tweet')
