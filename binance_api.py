@@ -230,23 +230,22 @@ class binance_api:
 	# Log the trade
 	def log_trade(self, ticker, buy_volume, hold_times, buy_trade, sell_trades, gain_text, status, simulate):
 		# Log trade
-		if self.logfile:
-			now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
+		now = datetime.now().strftime("%y-%m-%d_%H:%M:%S")
 
-			# Saving name format: time_started, json_file_used, simluation/live
-			with open("prev_trades/trades_%s_binance_%s_%s.txt" % (self.started_time.strftime('%Y-%m-%d_%H-%M-%S'), self.account_json, 'simulation' if simulate else 'live'), "a") as log_name:
-				# If status is a dict, the message was from a web scrape
-				if type(status) == dict:
-					json.dump({'url':status['url'],'update_text':status['update_text'],'update_time':status['update_time'].strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)	
+		# Saving name format: time_started, json_file_used, simluation/live
+		with open("prev_trades/trades_%s_binance_%s_%s.txt" % (self.started_time.strftime('%Y-%m-%d_%H-%M-%S'), self.account_json, 'simulation' if simulate else 'live'), "a") as log_name:
+			# If status is a dict, the message was from a web scrape
+			if type(status) == dict:
+				json.dump({'url':status['url'],'update_text':status['update_text'],'update_time':status['update_time'].strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)	
 
-				# If tweet from stream or query
-				else:
-					try:
-						full_text = status.text
-					except:
-						full_text = status.full_text
-					json.dump({'user':status.user.screen_name,'tweet':full_text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
-				log_name.write('\n')
+			# If tweet from stream or query
+			else:
+				try:
+					full_text = status.text
+				except:
+					full_text = status.full_text
+				json.dump({'user':status.user.screen_name,'tweet':full_text,'tweet_time':status.created_at.strftime('%Y-%m-%d_%H:%M:%S'),'ticker':ticker,'hold_times':hold_times,'complete_time':now,'buy_volume':buy_volume,'buy':buy_trade,'sell':sell_trades,'telegram':gain_text}, log_name)
+			log_name.write('\n')
 
 
 	# Execute trade
