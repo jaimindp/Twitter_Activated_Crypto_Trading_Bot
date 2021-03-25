@@ -69,7 +69,7 @@ class exchange_pull:
 		while 1:
 
 			# Refresh the whole exchange so new tickers are included not just new prices		
-			if self.count_pulls % 10 == 0 and len(self.coin_subset) > 1:
+			if self.count_pulls % 10 == 0 and self.coin_subset is not None:
 				print('Exchange refreshed')
 				self.my_exchange.refresh_exchange()
 

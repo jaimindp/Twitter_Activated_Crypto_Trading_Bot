@@ -26,7 +26,15 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 	if not both:
 		if stream:
 			# From stream_multiple.py file
-			stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
+			while 1:
+				try:
+					stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
+				except KeyboardInterrupt as e:
+					exit()
+				except Exception as e:
+					print('%s Error in streaming - %s' % (datetime.now().strftime('%m/%d %H:%M:%S'), e))
+
+
 		else:
 			# Query tweets from query.py file
 			query_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, print_timer=print_timer, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)

@@ -173,6 +173,10 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 
 	if exchange_data is None:
 		exchange_data = exchange_pull(exchange, hold_times, base_coin=sell_coin, coin_subset=coin_subset)
+		# Create daemon thread which exits when other thread exits
+		daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
+		daemon.setDaemon(True)
+		daemon.start()
 		time.sleep(3)
 	
 	# Create the Tweepy streamer
@@ -182,10 +186,6 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 	# Start stream and query prices
 	print('\nStarting stream\n')
 	
-	# Create daemon thread which exits when other thread exits
-	daemon = threading.Thread(name='daemon', target=exchange_data.buy_sell_volumes, args=(buy_volume,20*60))
-	daemon.setDaemon(True)
-	daemon.start()
 
 	# Try catch for different termination procedures
 	while 1:
@@ -204,12 +204,13 @@ def stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, excha
 			print('-'*50)
 			print('\nWaiting for trades to finish\n')
 			cancel[0] = True
-			return
+			# return
+			exit()
 		
 		# Disconnect the stream and kill the thread looking for prices
 		finally:
 			print('\nDisconnected Stream\n')
-			exchange_data.stopflag = True
+			# exchange_data.stopflag = True
 			stream.disconnect()
 
 
