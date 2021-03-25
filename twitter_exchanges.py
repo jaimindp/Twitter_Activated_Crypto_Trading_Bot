@@ -29,8 +29,9 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 			while 1:
 				try:
 					stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
-				except KeyboardInterrupt as e:
-					exit()
+				except KeyboardInterrupt:
+					print('\nExiting main thread')
+					break
 				except Exception as e:
 					print('%s Error in streaming - %s' % (datetime.now().strftime('%m/%d %H:%M:%S'), e))
 
@@ -58,7 +59,13 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 		t1.start()
 
 		# Stream tweets
-		stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
+		while 1:
+			try:
+				stream_tweets(api, users, sell_coin, hold_times, buy_volume, simulate, exchange, full_ex=full_ex, exchange_data=exchange_data, cancel=cancel)
+			except KeyboardInterrupt:
+				break
+			except Exception as e:
+				print('%s Error in streaming - %s' % (datetime.now().strftime('%m/%d %H:%M:%S'), e))
 
 		print('\nSetting cancel to true')
 		cancel[0] = True
