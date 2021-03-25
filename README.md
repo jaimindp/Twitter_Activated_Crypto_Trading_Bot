@@ -1,7 +1,7 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 23th 2021 - twitter_exchanges.py works with querying. Issue with streaming.
+### March 23th 2021 - twitter_exchanges.py works with querying. Issue with streaming fixed too.
 
 New thread created for trade so multiple trades can occur concurrently under streaming. Ctrl-c will allow the trades to close out in the given time and the program to exit automatically. (March 17th)
 
