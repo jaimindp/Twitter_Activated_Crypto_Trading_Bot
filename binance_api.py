@@ -113,7 +113,7 @@ class binance_api:
 
 	# Get data from self.exchange and print it 
 	def simulate_trade(self, buy, volume, ticker, conversion):
-		if conversion[-4:] == 'USDT':
+		if conversion[-4:] == 'USDT' and ticker[-4:] == 'USDT':
 			usdpair = {'bid':1,'ask':1}
 		else:
 			usdpair = self.exchange.fetchTicker(conversion)
