@@ -5,6 +5,7 @@ import pytz
 from tzlocal import get_localzone
 from check_exchange import *
 import threading
+import traceback
 import re
 
 # Query using tweepy self.api
@@ -57,11 +58,13 @@ class Twitter_Query:
 
 	
 	# Parse a tweet and execute trade
-	def parse_tweet(self, new_tweet, utc_time):
-		full_text = new_tweet.full_text
+	def parse_tweet(self, status, utc_time):
+		full_text = status.full_text
 
-		if any(substr in full_text.lower() for substr in self.users[new_tweet.user.screen_name]['keywords']) and utc_time - new_tweet.created_at < timedelta(seconds=10):
+		successful = False
+		if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']) and utc_time - status.created_at < timedelta(seconds=10):
 			if self.full_ex: time.sleep(self.full_ex)
+
 			# Handling a single coin without checking substrings
 			if self.buy_coin:
 
@@ -69,9 +72,10 @@ class Twitter_Query:
 				try:
 					pair = [self.buy_coin, self.sell_coin]
 					coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
-					print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
-					t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':new_tweet})
+					t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':status})
 					t.start()
+					print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
+					successful = True
 
 				except Exception as e:
 					print('\nTried executing trade with ticker %s/%s, did not work' % (self.buy_coin,self.sell_coin))
@@ -79,7 +83,7 @@ class Twitter_Query:
 			
 			else:	
 				# Loop over possible coin string lengths and get coins, firstflag is the first try to trade, successful is a flag if traded or not
-				firstflag, successful = True, False
+				firstflag= True
 				
 				# String manipulation and finding coins
 				full_text = full_text.replace('\n', ' ')
@@ -97,11 +101,12 @@ class Twitter_Query:
 						try:
 							pair = [pairs[0][j], pairs[1]]
 							coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
-							print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 
 							# Start the buy thread
-							t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':new_tweet})
+							t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':status})
 							t.start()
+							print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
+
 							successful = True
 							
 							# Break means only execute on one coin
@@ -114,8 +119,11 @@ class Twitter_Query:
 					if successful:
 						break
 
-				if not successful:
-					print('\nNo valid tickers to trade in tweet')
+		print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
+		print('%s\n@%s - %s:\n\n"%s"' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
+			
+		if not successful:
+			print('\nNo valid tickers to trade in tweet')
 
 
 	# query a user tweeting about a crypto
@@ -137,7 +145,7 @@ class Twitter_Query:
 				                           wait_on_rate_limit_notify=True
 				                           )
 
-				last_tweet = new_tweet = first_tweet = tweets[0]
+				last_tweet = status = first_tweet = tweets[0]
 
 			except Exception as e:
 				print(e)
@@ -147,7 +155,7 @@ class Twitter_Query:
 			print('\nWaiting for {} to tweet\n'.format(user['username']))
 			
 			# Loop and sleep for a second to check when the last tweet has changed (e.g. when user has tweeted)
-			while new_tweet.full_text == last_tweet.full_text:
+			while status.full_text == last_tweet.full_text:
 
 				# Checking if the thread has been cancelled
 				if self.cancel[0]:
@@ -163,7 +171,7 @@ class Twitter_Query:
 				time.sleep(max(0, sleep_time))
 				last_time = time.time()
 				try:
-					new_tweet = self.api.user_timeline(user_id = user['id'],
+					status = self.api.user_timeline(user_id = user['id'],
 						                          count = 1,
 						                          include_rts = True,
 						                          exclude_replies = True,
@@ -181,7 +189,7 @@ class Twitter_Query:
 
 			# Parse and execute tweet under correct conditions
 			try:
-				self.parse_tweet(new_tweet, utc_time)
+				self.parse_tweet(status, utc_time)
 			except Exception as e:
 				print(traceback.format_exc())
 

@@ -81,10 +81,10 @@ class Listener(StreamListener):
 				return
 
 			# Check for substring matches with the keywords speicified for that user and only looking at original non-retweets
+			successful = False
 			if any(substr in full_text.lower() for substr in self.users[status.user.screen_name]['keywords']):
 				if self.full_ex: time.sleep(self.full_ex)
-				print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
-				print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
+
 				# Handling a single coin without checking substrings
 				if self.buy_coin:
 
@@ -92,9 +92,10 @@ class Listener(StreamListener):
 					try:
 						pair = [self.buy_coin, self.sell_coin]
 						coin_vol = self.exchange_data.buy_sell_vols[self.buy_coin]
-						print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 						t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate,'status':status})
 						t.start()
+						print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
+						successful=True
 
 					except Exception as e:
 						print('\nTried executing trade with ticker %s/%s, did not work' % (self.buy_coin,self.sell_coin))
@@ -102,7 +103,7 @@ class Listener(StreamListener):
 				
 				else:	
 					# Loop over possible coin string lengths and get coins, firstflag is the first try to trade, successful is a flag if traded or not
-					firstflag, successful = True, False
+					firstflag = True
 					
 					# String manipulation and finding coins
 					full_text = full_text.replace('\n', ' ')
@@ -120,11 +121,11 @@ class Listener(StreamListener):
 							try:
 								pair = [pairs[0][j], pairs[1]]
 								coin_vol = self.exchange_data.buy_sell_vols[pair[0]]
-								print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 
 								# Start the buy thread
 								t = threading.Thread(target=self.exchange.execute_trade, args=(pair,), kwargs={'hold_times':self.hold_times, 'buy_volume':coin_vol, 'simulate':self.simulate, 'status':status})
 								t.start()
+								print('\n\n'+'*'*25 + ' Moonshot Inbound! '+'*'*25 + '\n')
 								successful = True
 								
 								# Break means only execute on one coin
@@ -137,12 +138,12 @@ class Listener(StreamListener):
 						if successful:
 							break
 
-					if not successful:
-						print('\nNo valid tickers to trade in tweet')
+			print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
+			print('%s\n@%s - %s:\n\n"%s"' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
+			
+			if not successful:
+				print('\nNo valid tickers to trade in tweet')
 
-			else:
-				print('\n\n'+'-'*15 + ' New Tweet ' + '-' * 15)
-				print('%s\n\n@%s - %s:\n\n%s' % (datetime.now().strftime('%H:%M:%S'), status.user.screen_name, status.created_at.strftime('%b %d at %H:%M:%S'), full_text))
 
 		except Exception as e:
 			print('\nError when handling tweet')
