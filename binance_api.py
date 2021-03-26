@@ -182,6 +182,7 @@ class binance_api:
 						ticker_info = {'bid':1,'ask':1}
 					else:
 						ticker_info = self.exchange.fetch_ticker(ticker_pair[1]+'/'+'USDT')
+					break
 				except Exception as e:
 					print(e)
 					print('\nError in printing executed trades')
