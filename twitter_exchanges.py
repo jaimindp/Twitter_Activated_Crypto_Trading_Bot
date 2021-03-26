@@ -47,7 +47,7 @@ def tweepy_pull(api, users, sell_coin, hold_times, buy_volume, simulate, stream,
 				except KeyboardInterrupt:
 					print('\nSetting cancel to true')
 					cancel[0] = True
-
+					time.sleep(2)
 					while threading.active_count() > 2:
 						time.sleep(1)
 						print('There are %d trades left to sell' %  (threading.active_count() - 2))
