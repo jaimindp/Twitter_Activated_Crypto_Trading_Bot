@@ -1,7 +1,7 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 23rd 2021 - Stopped updating repo, building functionality privately, message for info.
+### March 23rd 2021 - Stopped updating repo, building functionality privately. Message for info.
 
 twitter_exchanges.py works with querying. Issue with streaming fixed too. (Mar 23rd)
 
