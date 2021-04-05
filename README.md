@@ -1,7 +1,9 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
-### March 23th 2021 - twitter_exchanges.py works with querying. Issue with streaming fixed too.
+### March 23rd 2021 - Stopped updating repo, building functionality privately, message for info.
+
+twitter_exchanges.py works with querying. Issue with streaming fixed too. (Mar 23rd)
 
 New thread created for trade so multiple trades can occur concurrently under streaming. Ctrl-c will allow the trades to close out in the given time and the program to exit automatically. (March 17th)
 
@@ -54,44 +56,6 @@ API keys are kept in a json, one directory up from repo ../keys.json
     }
 }
 ```
-
-## To Do List
-- Reduce latency between tweet and trade to 2s (done)
-	- Prevent multiple trades of the same coin within a time window (done - block variable when a trade is already executing)
-- Implement futures trading to leverage larger sums of money (Not on github, message me)
-	- USD(S)(Stablecoin pegged) currently USDT (Done)
-- Test for trading any alt coins (done)
-	- Allow for buying amounts with no BNB in account
-	- For a previously untraded coin (done binance)
-	- Handle multiple coins in the same tweet
-		- Execute trade on coin with the lowest market cap
-		- Execute trade on all coins at the same time
-		- Execute trades in a loop (done)
-	- Dynamically adjust amounts to buy from prices with valid coin rounding (done)
-	- Dynamically addjust amounts to valid % of coin wallet
-	- Prevent $ amount becoming more than maximium of coin in wallet
-	- Update exchange rates with one thread pulling prices and one thread checking for tweets (done)
-	- Check leverage limits for coins
-- Implement more sell options
-	- Specified % gain
-	- Cut losses at % drop
-	- Limit order at a price target
-	- Limit downside with a % drop cap to pull out of trade
-	- Trailing stop losses (Can use ccxt for this)
-	- Sell in chunks over user specified time (done)
-	- Allow different hold times for different users and keywords
-- Reduce fees using BNB coin and check working for all trades (done)
-- Trade notification system for user
-	- Slack API
-	- Telegram API (done)
-- Improve trade logging system (done)
-- Machine Learning features
-	- Sentiment feature
-		- For size of position 
-		- Shorting
-	- Interpreting images (CV for text extraction, object detection on memes)
-
-
 ## Notes
 - Requires a Twitter Developer API detecting tweets through Tweepy
 - Requires a crypto exchange (Kraken/Binance) API which is used through ccxt (cryptocurrency exchange trading library)
