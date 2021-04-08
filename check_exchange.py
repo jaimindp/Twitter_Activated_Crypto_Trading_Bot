@@ -71,7 +71,7 @@ class exchange_pull:
 
 			# Refresh the whole exchange so new tickers are included not just new prices		
 			if self.count_pulls % 10 == 0 and self.coin_subset is None:
-				print('Exchange refreshed')
+				print('\nExchange refreshed')
 				self.my_exchange.refresh_exchange()
 
 			# Set as cancellable thread on wakeup

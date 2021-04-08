@@ -33,10 +33,6 @@ To run with Binance (monitors a single ticker): \
 To run with Kraken (monitors a single ticker): \
 `python twitter_kraken.py`
 
-New coin listings (Trades any pair listed on Binance): \
-`python twitter_exchanges.py`
-
-
 API keys are kept in a json, one directory up from repo ../keys.json
 ```
 {
