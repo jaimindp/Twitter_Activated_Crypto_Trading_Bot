@@ -1,6 +1,8 @@
 # Tweet Activated Crypto Trader
 
 ## Updates
+### June 2nd 2021 - This project is now <a href='https://www.lazytrade.io'>www.lazytrade.io</a>. You can execute Twitter based crypto buying and selling through the Telegram messaging app!
+
 ### March 23rd 2021 - Stopped updating repo, building functionality privately. Message for info.
 
 twitter_exchanges.py works with querying. Issue with streaming fixed too. (Mar 23rd)
