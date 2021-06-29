@@ -3,8 +3,9 @@
 ## Updates
 ### June 2nd 2021 - This project is now <a href='https://www.lazytrade.io'>www.lazytrade.io</a>. You can execute rapid crypto trades through Telegram!
 
-![](https://lazytrade-media.s3.eu-west-2.amazonaws.com/demos/elon_2.gif)
-<img src="https://lazytrade-media.s3.eu-west-2.amazonaws.com/demos/elon_2.gif" align='center' style="height: 60vh">
+![Alt Text](https://lazytrade-media.s3.eu-west-2.amazonaws.com/demos/elon_2.gif)
+<!-- ![](https://lazytrade-media.s3.eu-west-2.amazonaws.com/demos/elon_2.gif) -->
+<img src="/elon_2.gif">
 
 March 23rd 2021 - Stopped updating repo, building functionality privately. Message for info.
 
