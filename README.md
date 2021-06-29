@@ -1,9 +1,10 @@
 # Tweet Activated Crypto Trader
 
-## Updates
-### June 2nd 2021 - This project is now <a href='https://www.lazytrade.io'>www.lazytrade.io</a>. You can execute rapid crypto trades through Telegram!
+# This project is now <a href='https://www.lazytrade.io'>www.lazytrade.io</a>. Execute crypto trades with one touch on Telegram!
 
 <img src="/elon_2.gif">
+
+## For the fully automated trading version of this app see below!
 
 March 23rd 2021 - Stopped updating repo, building functionality privately. Message for info.
 
